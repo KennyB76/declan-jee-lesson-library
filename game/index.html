@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Declan's Equation Dojo · Newton School</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<script>window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --bg:#09090b; --bg-2:#13131a;
+  --card:#18181b; --border:#2a2a32; --border-strong:#3f3f48;
+  --text:#f4f4f5; --text-dim:#a1a1aa; --text-muted:#71717a;
+  --primary:#a78bfa; --secondary:#f472b6; --accent:#6366f1;
+  --green:#4ade80; --amber:#fbbf24; --red:#f87171; --cyan:#22d3ee;
+  --grad:linear-gradient(135deg,#a78bfa,#f472b6);
+  --grad-2:linear-gradient(135deg,#22d3ee,#a78bfa);
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;
+  overflow-x:hidden;
+  position:relative;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 0%,rgba(167,139,250,.18),transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 100%,rgba(244,114,182,.14),transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+.wrap{
+  max-width:880px; margin:0 auto;
+  padding:24px 20px 48px;
+  position:relative; z-index:1;
+}
+
+/* ========================== Header ========================== */
+.top{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px;
+  flex-wrap:wrap; gap:10px;
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{
+  width:38px; height:38px; border-radius:10px;
+  background:var(--grad);
+  display:grid; place-items:center;
+  font-weight:800; color:#fff;
+  box-shadow:0 4px 18px rgba(167,139,250,.4);
+}
+.brand h1{
+  font-size:20px; font-weight:800;
+  background:var(--grad);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  letter-spacing:-.5px;
+}
+.brand .sub{ font-size:11px; color:var(--text-muted); font-family:var(--mono); letter-spacing:1px; }
+
+.back-link{
+  font-size:11px; font-family:var(--mono); letter-spacing:1px;
+  color:var(--text-dim); text-decoration:none;
+  padding:6px 12px; border:1px solid var(--border); border-radius:6px;
+  transition:all .15s;
+}
+.back-link:hover{ color:var(--text); border-color:var(--primary); }
+
+/* ========================== HUD ========================== */
+.hud{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+  margin-bottom:14px;
+}
+.hud-cell{
+  background:var(--card); border:1px solid var(--border);
+  border-radius:10px; padding:10px 12px; text-align:center;
+}
+.hud-cell .lbl{ font-size:10px; color:var(--text-muted); letter-spacing:1px; font-weight:600; }
+.hud-cell .val{
+  font-family:var(--mono); font-weight:700; font-size:18px;
+  background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+  margin-top:2px;
+}
+.hud-cell.lives .val{ background:none; -webkit-text-fill-color:var(--red); color:var(--red); letter-spacing:2px; }
+.hud-cell.streak.glow .val{ animation:pulse-streak 1s ease-out; }
+@keyframes pulse-streak{
+  0%{transform:scale(1)} 50%{transform:scale(1.25);text-shadow:0 0 18px rgba(244,114,182,.7)} 100%{transform:scale(1)}
+}
+
+/* ========================== Mode Tabs ========================== */
+.tabs{
+  display:flex; gap:6px; margin-bottom:16px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:10px; padding:4px;
+}
+.tab{
+  flex:1; padding:9px 14px;
+  background:transparent; border:0; cursor:pointer;
+  color:var(--text-dim); font-size:13px; font-weight:600;
+  font-family:inherit; border-radius:7px;
+  transition:all .15s;
+}
+.tab:hover{ color:var(--text); }
+.tab.active{
+  background:var(--grad); color:#fff;
+  box-shadow:0 4px 12px rgba(167,139,250,.3);
+}
+
+/* ========================== Stage ========================== */
+.stage{
+  background:linear-gradient(180deg,var(--card) 0%,var(--bg-2) 100%);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:34px 32px;
+  position:relative;
+  overflow:hidden;
+}
+.stage::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 40% at 50% 0%,rgba(244,114,182,.10),transparent 70%);
+  pointer-events:none;
+}
+
+.enemy{
+  text-align:center;
+  font-size:64px;
+  line-height:1; margin-bottom:8px;
+  filter:drop-shadow(0 6px 18px rgba(167,139,250,.35));
+  animation:bob 3s ease-in-out infinite;
+}
+.enemy.hit{ animation:shake .35s; }
+.enemy.beaten{ animation:fade-out .5s forwards; }
+@keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes shake{
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)} 40%{transform:translateX(10px)}
+  60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}
+}
+@keyframes fade-out{ to{opacity:0; transform:scale(.4)} }
+
+.enemy-name{
+  text-align:center; font-family:var(--mono); font-size:11px;
+  color:var(--text-muted); letter-spacing:2px; margin-bottom:18px;
+}
+
+.problem{
+  background:rgba(0,0,0,.30);
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:24px 20px;
+  font-size:26px;
+  text-align:center;
+  font-family:'Times New Roman',serif;
+  color:var(--text);
+  position:relative; z-index:1;
+  min-height:80px;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.choices{
+  display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
+  margin-top:18px;
+}
+.choice{
+  padding:14px 16px;
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:10px;
+  font-size:18px; font-family:'Times New Roman',serif;
+  color:var(--text); cursor:pointer;
+  transition:all .15s;
+  text-align:center;
+  position:relative; z-index:1;
+}
+.choice:hover:not(:disabled){
+  border-color:var(--primary);
+  background:rgba(167,139,250,.10);
+  transform:translateY(-2px);
+}
+.choice.correct{
+  background:rgba(74,222,128,.18);
+  border-color:var(--green);
+  color:var(--green);
+  animation:glow-green .6s;
+}
+.choice.wrong{
+  background:rgba(248,113,113,.15);
+  border-color:var(--red);
+  color:var(--red);
+}
+.choice:disabled{ cursor:default; opacity:.7; }
+@keyframes glow-green{
+  0%{box-shadow:0 0 0 0 rgba(74,222,128,.6)}
+  100%{box-shadow:0 0 0 18px rgba(74,222,128,0)}
+}
+
+/* ========================== Solution Reveal ========================== */
+.solution{
+  margin-top:18px;
+  background:rgba(167,139,250,.08);
+  border:1px solid var(--primary);
+  border-left:4px solid var(--primary);
+  border-radius:8px;
+  padding:14px 18px;
+  font-size:14px; line-height:1.6;
+  color:var(--text);
+  display:none;
+  position:relative; z-index:1;
+}
+.solution.show{ display:block; animation:slide-in .3s; }
+@keyframes slide-in{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.solution h4{
+  font-size:11px; letter-spacing:1.5px;
+  color:var(--primary); margin-bottom:8px;
+  font-weight:700;
+}
+.solution .step{ margin:4px 0; font-family:var(--mono); font-size:13px; }
+.solution .next-btn{
+  margin-top:12px;
+  background:var(--grad); color:#fff;
+  border:0; padding:9px 20px;
+  border-radius:7px; font-size:13px; font-weight:700;
+  font-family:inherit;
+  cursor:pointer;
+  letter-spacing:1px;
+}
+
+/* ========================== Game Over ========================== */
+.gameover{
+  display:none;
+  text-align:center;
+  padding:50px 20px;
+}
+.gameover.show{ display:block; }
+.gameover .big{
+  font-size:60px;
+  background:var(--grad);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  font-weight:900;
+}
+.gameover h2{ font-size:22px; margin-top:8px; margin-bottom:8px; color:var(--text); }
+.gameover p{ font-size:14px; color:var(--text-dim); margin-bottom:24px; }
+.gameover .stats-row{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+  max-width:480px; margin:0 auto 26px;
+}
+.gameover .stats-row .stat{
+  background:var(--card); border:1px solid var(--border);
+  border-radius:10px; padding:14px 10px;
+}
+.gameover .stats-row .stat .v{ font-family:var(--mono); font-size:22px; font-weight:700; color:var(--primary); }
+.gameover .stats-row .stat .k{ font-size:10px; color:var(--text-muted); letter-spacing:1px; margin-top:3px; }
+.gameover .restart{
+  background:var(--grad); color:#fff;
+  border:0; padding:13px 32px;
+  border-radius:9px; font-size:14px; font-weight:700;
+  font-family:inherit; cursor:pointer;
+  letter-spacing:1.5px;
+  box-shadow:0 8px 22px rgba(167,139,250,.35);
+}
+
+/* ========================== Footer ========================== */
+.footer{
+  margin-top:24px; text-align:center;
+  font-size:11px; color:var(--text-muted);
+  font-family:var(--mono); letter-spacing:1px;
+}
+.footer .high{ color:var(--secondary); }
+
+/* particles */
+.spark{
+  position:fixed; pointer-events:none; z-index:99;
+  font-size:24px; opacity:0;
+  animation:spark 1s ease-out forwards;
+}
+@keyframes spark{
+  0%{opacity:1; transform:translate(0,0) scale(1)}
+  100%{opacity:0; transform:translate(var(--dx),var(--dy)) scale(.4)}
+}
+
+@media (max-width:520px){
+  .hud{ grid-template-columns:repeat(2,1fr); }
+  .choices{ grid-template-columns:1fr; }
+  .problem{ font-size:20px; }
+  .enemy{ font-size:48px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="brand-mark">D</div>
+      <div>
+        <h1>Declan's Equation Dojo</h1>
+        <div class="sub">NEWTON SCHOOL · MATH BATTLE</div>
+      </div>
+    </div>
+    <a class="back-link" href="../index.html">← LIBRARY</a>
+  </div>
+
+  <div class="hud">
+    <div class="hud-cell"><div class="lbl">SCORE</div><div class="val" id="hud-score">0</div></div>
+    <div class="hud-cell streak" id="hud-streak-cell"><div class="lbl">STREAK</div><div class="val" id="hud-streak">0</div></div>
+    <div class="hud-cell"><div class="lbl">LEVEL</div><div class="val" id="hud-level">1</div></div>
+    <div class="hud-cell lives"><div class="lbl">LIVES</div><div class="val" id="hud-lives">♥♥♥</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-mode="equation">🛡 Equation Dojo</button>
+    <button class="tab" data-mode="fraction">⚔ Fraction Forge</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="enemy" id="enemy">👹</div>
+    <div class="enemy-name" id="enemy-name">GOBLIN</div>
+    <div class="problem" id="problem">$3x + 7 = 22$</div>
+    <div class="choices" id="choices"></div>
+    <div class="solution" id="solution">
+      <h4>SOLUTION</h4>
+      <div id="solution-steps"></div>
+      <button class="next-btn" id="next-btn">NEXT →</button>
+    </div>
+  </div>
+
+  <div class="gameover" id="gameover">
+    <div class="big">💥</div>
+    <h2>Dojo Closed</h2>
+    <p>Take a breath, review the steps, then jump back in.</p>
+    <div class="stats-row">
+      <div class="stat"><div class="v" id="end-score">0</div><div class="k">FINAL SCORE</div></div>
+      <div class="stat"><div class="v" id="end-best">0</div><div class="k">BEST STREAK</div></div>
+      <div class="stat"><div class="v" id="end-level">1</div><div class="k">LEVEL REACHED</div></div>
+    </div>
+    <button class="restart" id="restart">⚔ FIGHT AGAIN</button>
+  </div>
+
+  <div class="footer">
+    HIGH SCORE: <span class="high" id="hi-score">0</span> · Made for Declan by Mr. Kenny
+  </div>
+
+</div>
+
+<script>
+// ============== STATE ==============
+const HI_KEY = "declan-equation-dojo-highscore-v1";
+const state = {
+  mode: "equation",
+  score: 0,
+  streak: 0,
+  bestStreak: 0,
+  level: 1,
+  lives: 3,
+  current: null,
+  answered: false,
+};
+let highScore = parseInt(localStorage.getItem(HI_KEY) || "0", 10);
+document.getElementById("hi-score").textContent = highScore;
+
+// ============== HELPERS ==============
+const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const choose = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const sign = () => choose([1, -1]);
+const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
+const reduce = (n, d) => { const g = gcd(n, d); return [n/g, d/g]; };
+const fmtFrac = (n, d) => {
+  if (d === 1) return `${n}`;
+  if (n === 0) return `0`;
+  const sign = (n < 0) !== (d < 0) ? "-" : "";
+  return `${sign}\\dfrac{${Math.abs(n)}}{${Math.abs(d)}}`;
+};
+const lcm = (a, b) => Math.abs(a*b) / gcd(a, b);
+
+// ============== ENEMY POOL ==============
+const ENEMIES = [
+  { e:"👹", n:"GOBLIN" }, { e:"🦇", n:"BAT KNIGHT" }, { e:"🐺", n:"DIRE WOLF" },
+  { e:"💀", n:"SKELETON" }, { e:"👻", n:"WRAITH" }, { e:"🐲", n:"YOUNG DRAGON" },
+  { e:"🦂", n:"SAND SCORPION" }, { e:"🦑", n:"DEEP KRAKEN" }, { e:"🧟", n:"GRAVE WALKER" },
+  { e:"🐍", n:"FROST SERPENT" }, { e:"🦅", n:"STORM EAGLE" }, { e:"🐗", n:"BOULDER BOAR" },
+  { e:"🦖", n:"REX HUNTER" }, { e:"🤖", n:"GOLEM v2" }, { e:"👁", n:"OMINOUS EYE" },
+  { e:"🦴", n:"BONE LORD" },
+];
+const BOSS = { e:"👑🐉", n:"DRAGON KING" };
+
+function pickEnemy() {
+  if (state.streak > 0 && state.streak % 8 === 0) return BOSS;
+  return choose(ENEMIES);
+}
+
+// ============== EQUATION GENERATOR ==============
+// Returns { problem (LaTeX), correctIdx, choices [4 LaTeX], steps [array of strings] }
+function genEquation(level) {
+  const types = [];
+  if (level >= 1) types.push("two_step");
+  if (level >= 2) types.push("distribute");
+  if (level >= 3) types.push("vars_both");
+  if (level >= 4) types.push("distribute_both");
+  if (level >= 5) types.push("identity_or_none");
+
+  const type = choose(types);
+
+  if (type === "two_step") {
+    // ax + b = c → x = (c-b)/a
+    const a = rnd(2,8), x = rnd(-6,9), b = rnd(-12,15);
+    const c = a*x + b;
+    const lhs = `${a}x ${b>=0?"+ "+b:"- "+(-b)}`;
+    return {
+      problem: `Solve: \\(${lhs} = ${c}\\)`,
+      correct: `x = ${x}`,
+      steps: [
+        `${lhs} = ${c}`,
+        `${a}x = ${c - b}`,
+        `x = ${x}`,
+      ],
+      distractors: distractInt(x),
+    };
+  }
+
+  if (type === "distribute") {
+    // a(x + b) = c   → x = c/a - b
+    const a = rnd(2,7), x = rnd(-4,9), b = rnd(-7,7);
+    const c = a*(x + b);
+    return {
+      problem: `Solve: \\(${a}(x ${b>=0?"+ "+b:"- "+(-b)}) = ${c}\\)`,
+      correct: `x = ${x}`,
+      steps: [
+        `${a}(x ${b>=0?"+ "+b:"- "+(-b)}) = ${c}`,
+        `${a}x ${a*b>=0?"+ "+a*b:"- "+(-a*b)} = ${c}`,
+        `${a}x = ${c - a*b}`,
+        `x = ${x}`,
+      ],
+      distractors: distractInt(x),
+    };
+  }
+
+  if (type === "vars_both") {
+    // ax + b = cx + d → x = (d-b)/(a-c)
+    let a, c, b, d, x;
+    do {
+      a = rnd(2,9); c = rnd(2,9);
+      if (a === c) continue;
+      x = rnd(-4,8);
+      b = rnd(-9,9);
+      d = (a - c)*x + b;
+    } while (a === c);
+    return {
+      problem: `Solve: \\(${a}x ${b>=0?"+ "+b:"- "+(-b)} = ${c}x ${d>=0?"+ "+d:"- "+(-d)}\\)`,
+      correct: `x = ${x}`,
+      steps: [
+        `${a}x ${b>=0?"+ "+b:"- "+(-b)} = ${c}x ${d>=0?"+ "+d:"- "+(-d)}`,
+        `${a-c}x ${b>=0?"+ "+b:"- "+(-b)} = ${d}`,
+        `${a-c}x = ${d - b}`,
+        `x = ${x}`,
+      ],
+      distractors: distractInt(x),
+    };
+  }
+
+  if (type === "distribute_both") {
+    // a(x + b) = c(x + d)
+    let a, c, b, d, x;
+    do {
+      a = rnd(2,7); c = rnd(2,7);
+      if (a === c) continue;
+      x = rnd(-4,7);
+      b = rnd(-5,5);
+      // ax + ab = cx + cd → x = (cd - ab)/(a-c)
+      // pick d so x is integer
+      const numerator = (a-c)*x + a*b;
+      d = numerator / c;
+      if (!Number.isInteger(d) || Math.abs(d) > 9) continue;
+    } while (a === c || !Number.isInteger(d));
+    return {
+      problem: `Solve: \\(${a}(x ${b>=0?"+ "+b:"- "+(-b)}) = ${c}(x ${d>=0?"+ "+d:"- "+(-d)})\\)`,
+      correct: `x = ${x}`,
+      steps: [
+        `${a}x ${a*b>=0?"+ "+a*b:"- "+(-a*b)} = ${c}x ${c*d>=0?"+ "+c*d:"- "+(-c*d)}`,
+        `${a-c}x = ${c*d - a*b}`,
+        `x = ${x}`,
+      ],
+      distractors: distractInt(x),
+    };
+  }
+
+  if (type === "identity_or_none") {
+    const a = rnd(2,8), b = rnd(2,9);
+    const isIdentity = Math.random() < 0.5;
+    if (isIdentity) {
+      // a(x - b) = ax - ab
+      const ab = a*b;
+      return {
+        problem: `Solve: \\(${a}(x - ${b}) = ${a}x - ${ab}\\)`,
+        correct: "Infinitely many",
+        steps: [
+          `${a}(x - ${b}) = ${a}x - ${ab}`,
+          `${a}x - ${ab} = ${a}x - ${ab}`,
+          `Both sides identical → infinitely many solutions.`,
+        ],
+        distractors: ["No solution", `x = ${b}`, `x = 0`],
+        special: true,
+      };
+    } else {
+      // a(x + b) = ax + (ab + offset)
+      const offset = rnd(2,9);
+      return {
+        problem: `Solve: \\(${a}(x + ${b}) = ${a}x + ${a*b + offset}\\)`,
+        correct: "No solution",
+        steps: [
+          `${a}(x + ${b}) = ${a}x + ${a*b + offset}`,
+          `${a}x + ${a*b} = ${a}x + ${a*b + offset}`,
+          `${a*b} = ${a*b + offset} ✗ contradiction → no solution.`,
+        ],
+        distractors: ["Infinitely many", `x = ${b}`, `x = ${offset}`],
+        special: true,
+      };
+    }
+  }
+}
+
+function distractInt(correct) {
+  const out = new Set();
+  while (out.size < 3) {
+    const off = choose([-3, -2, -1, 1, 2, 3, -correct, correct+1]);
+    const cand = correct + off;
+    if (cand !== correct) out.add(`x = ${cand}`);
+  }
+  return [...out].slice(0,3);
+}
+
+// ============== FRACTION GENERATOR ==============
+// Adding/Subtracting fractions with negatives — multiple choice
+function genFraction(level) {
+  // numerators 1..(3+level), denominators 2..(8+level)
+  const maxNum = 3 + Math.min(level, 5);
+  const maxDen = 6 + Math.min(level, 6);
+  let n1, d1, n2, d2;
+  do { n1 = rnd(1, maxNum); d1 = rnd(2, maxDen); } while (gcd(n1, d1) !== 1);
+  do { n2 = rnd(1, maxNum); d2 = rnd(2, maxDen); } while (gcd(n2, d2) !== 1 || (n1 === n2 && d1 === d2));
+  // both sides forced negative (matches Image 1 style)
+  const op = choose(["+", "-"]);
+  // signs: always at least one negative
+  const a = -n1, ad = d1;
+  const bN = (op === "+") ? -n2 : -n2; // both originally negative; subtraction changes sign
+  // but display preserves the "minus negative" form
+  const L = lcm(d1, d2);
+  let resultN, resultD = L;
+  if (op === "+") resultN = (-n1)*(L/d1) + (-n2)*(L/d2);
+  else resultN = (-n1)*(L/d1) - (-n2)*(L/d2);
+  // reduce
+  const sgn = resultN < 0 ? -1 : 1;
+  const [rN, rD] = reduce(Math.abs(resultN), resultD);
+  const correctLatex = fmtFrac(sgn*rN, rD);
+
+  const problem = `Evaluate: \\(\\left(-${fmtFrac(n1,d1)}\\right) ${op} \\left(-${fmtFrac(n2,d2)}\\right)\\)`;
+
+  // distractors: sign flips, off-by-one, no-LCD (just add num/den)
+  const dDist = new Set();
+  // wrong sign
+  dDist.add(fmtFrac(-sgn*rN, rD));
+  // forgot to flip (if subtraction)
+  if (op === "-") dDist.add(fmtFrac(-(n1*(L/d1) + n2*(L/d2)), L));
+  // no LCD: just (n1+n2)/(d1+d2) classic mistake
+  dDist.add(fmtFrac(-(n1 + n2), d1 + d2));
+  // off by one in numerator
+  dDist.add(fmtFrac(sgn*(rN+1), rD));
+  // remove the correct one if it accidentally landed
+  dDist.delete(correctLatex);
+  const distractors = [...dDist].slice(0,3);
+
+  return {
+    problem,
+    correct: correctLatex,
+    distractors,
+    steps: [
+      `LCM of ${d1} and ${d2} is ${L}.`,
+      `\\(-${fmtFrac(n1,d1)} = ${fmtFrac(-n1*(L/d1), L)}\\), \\(-${fmtFrac(n2,d2)} = ${fmtFrac(-n2*(L/d2), L)}\\)`,
+      op === "-"
+        ? `Subtract a negative → add: result \\(= ${correctLatex}\\)`
+        : `Sum: \\(${correctLatex}\\)`,
+    ],
+  };
+}
+
+// ============== RENDER ==============
+function setHUD() {
+  document.getElementById("hud-score").textContent = state.score;
+  document.getElementById("hud-streak").textContent = state.streak;
+  document.getElementById("hud-level").textContent = state.level;
+  document.getElementById("hud-lives").textContent = "♥".repeat(state.lives) + "♡".repeat(3 - state.lives);
+}
+
+function renderProblem() {
+  state.answered = false;
+  const enemy = pickEnemy();
+  document.getElementById("enemy").textContent = enemy.e;
+  document.getElementById("enemy").className = "enemy";
+  document.getElementById("enemy-name").textContent = enemy.n;
+
+  const gen = state.mode === "equation" ? genEquation(state.level) : genFraction(state.level);
+  state.current = gen;
+
+  document.getElementById("problem").innerHTML = gen.problem;
+
+  // Build choices: correct + 3 distractors, shuffled
+  const opts = [gen.correct, ...gen.distractors].slice(0,4);
+  while (opts.length < 4) opts.push(`x = ?`);
+  shuffle(opts);
+  const correctIdx = opts.indexOf(gen.correct);
+
+  const cdiv = document.getElementById("choices");
+  cdiv.innerHTML = "";
+  opts.forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = gen.special ? opt : `\\(${opt}\\)`;
+    b.onclick = () => answer(i, correctIdx, b);
+    cdiv.appendChild(b);
+  });
+
+  document.getElementById("solution").classList.remove("show");
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([document.getElementById("stage")]);
+  }
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function answer(idx, correctIdx, btn) {
+  if (state.answered) return;
+  state.answered = true;
+
+  document.querySelectorAll(".choice").forEach(b => b.disabled = true);
+  const isRight = idx === correctIdx;
+
+  if (isRight) {
+    btn.classList.add("correct");
+    state.score += 10 + state.streak * 2;
+    state.streak += 1;
+    state.bestStreak = Math.max(state.bestStreak, state.streak);
+    const cell = document.getElementById("hud-streak-cell");
+    cell.classList.remove("glow"); void cell.offsetWidth; cell.classList.add("glow");
+    spawnSparks(btn);
+    document.getElementById("enemy").classList.add("beaten");
+    setHUD();
+
+    // Level up every 5 streak
+    if (state.streak % 5 === 0) state.level += 1;
+
+    setTimeout(() => {
+      if (state.score > highScore) {
+        highScore = state.score;
+        localStorage.setItem(HI_KEY, String(highScore));
+        document.getElementById("hi-score").textContent = highScore;
+      }
+      renderProblem();
+    }, 800);
+  } else {
+    btn.classList.add("wrong");
+    document.querySelectorAll(".choice")[correctIdx].classList.add("correct");
+    state.streak = 0;
+    state.lives -= 1;
+    document.getElementById("enemy").classList.add("hit");
+    setHUD();
+
+    // show solution
+    const sol = document.getElementById("solution");
+    const stepsEl = document.getElementById("solution-steps");
+    stepsEl.innerHTML = state.current.steps.map(s => `<div class="step">\\(${s}\\)</div>`).join("");
+    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([sol]);
+    sol.classList.add("show");
+
+    if (state.lives <= 0) {
+      setTimeout(showGameOver, 1500);
+    }
+  }
+}
+
+document.getElementById("next-btn").addEventListener("click", () => {
+  if (state.lives > 0) renderProblem();
+});
+
+function spawnSparks(btn) {
+  const r = btn.getBoundingClientRect();
+  const cx = r.left + r.width/2;
+  const cy = r.top + r.height/2;
+  const symbols = ["✦","⭐","✨","💥","⚡"];
+  for (let i = 0; i < 8; i++) {
+    const s = document.createElement("div");
+    s.className = "spark";
+    s.textContent = choose(symbols);
+    s.style.left = cx + "px"; s.style.top = cy + "px";
+    const angle = (Math.PI * 2 * i) / 8 + Math.random() * .5;
+    const dist = 80 + Math.random() * 60;
+    s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+    s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1100);
+  }
+}
+
+function showGameOver() {
+  document.getElementById("end-score").textContent = state.score;
+  document.getElementById("end-best").textContent = state.bestStreak;
+  document.getElementById("end-level").textContent = state.level;
+  document.getElementById("stage").style.display = "none";
+  document.getElementById("gameover").classList.add("show");
+}
+
+document.getElementById("restart").addEventListener("click", () => {
+  state.score = 0; state.streak = 0; state.bestStreak = 0;
+  state.level = 1; state.lives = 3;
+  document.getElementById("stage").style.display = "";
+  document.getElementById("gameover").classList.remove("show");
+  setHUD();
+  renderProblem();
+});
+
+// ============== MODE TABS ==============
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    if (tab.classList.contains("active")) return;
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    state.mode = tab.dataset.mode;
+    state.score = 0; state.streak = 0; state.bestStreak = 0;
+    state.level = 1; state.lives = 3;
+    setHUD();
+    renderProblem();
+  });
+});
+
+// ============== INIT ==============
+setHUD();
+renderProblem();
+</script>
+
+</body>
+</html>

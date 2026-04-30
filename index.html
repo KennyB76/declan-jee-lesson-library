@@ -25,9 +25,28 @@
   --green: #4ade80;
   --amber: #fbbf24;
   --red: #f87171;
+  --sidebar-bg: rgba(15, 15, 17, .85);
+  --viewer-bg: #0c0c0e;
   --grad: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
   --sidebar-w: 380px;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+body.theme-light {
+  --bg: #f7f5fb;
+  --bg-grad-1: rgba(167, 139, 250, .18);
+  --bg-grad-2: rgba(244, 114, 182, .14);
+  --card: #ffffff;
+  --card-hover: #f4f0fb;
+  --border: #e6e3ee;
+  --border-strong: #c9c3d8;
+  --text: #1c1730;
+  --text-dim: #564f6b;
+  --text-muted: #8b85a0;
+  --accent-1: #7c5cf2;
+  --accent-2: #db4f95;
+  --sidebar-bg: rgba(255, 255, 255, .92);
+  --viewer-bg: #faf7ff;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -61,12 +80,40 @@ body::before {
 
 /* ====================== Sidebar ====================== */
 .sidebar {
-  background: rgba(15, 15, 17, .85);
+  background: var(--sidebar-bg);
   backdrop-filter: blur(12px);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* ====================== Header toggles (Print/Theme/Lang) ====================== */
+.head-toggles {
+  display: flex; gap: 6px;
+  margin-bottom: 14px;
+}
+.head-toggles .icon-btn {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 7px 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 11px; font-weight: 600;
+  font-family: inherit;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.head-toggles .icon-btn:hover {
+  color: var(--text);
+  border-color: var(--accent-1);
+  transform: translateY(-1px);
+}
+.head-toggles .icon-btn .ic { font-size: 13px; }
+.head-toggles .icon-btn .lbl {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .5px;
 }
 
 .sidebar-header {
@@ -280,9 +327,28 @@ h1.student-name {
 /* ====================== Viewer ====================== */
 .viewer {
   display: flex; flex-direction: column;
-  background: #0c0c0e;
+  background: var(--viewer-bg);
   overflow: hidden;
 }
+
+/* Toast for keyboard shortcut + print hints */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .25s, transform .25s;
+  z-index: 50;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
 
 .viewer-toolbar {
   display: flex; align-items: center; gap: 12px;
@@ -342,6 +408,37 @@ h1.student-name {
   margin-bottom: 8px;
 }
 .viewer-empty p { font-size: 14px; max-width: 480px; line-height: 1.6; }
+
+.game-hero {
+  margin-top: 24px;
+  max-width: 560px; width: 100%;
+  background: linear-gradient(135deg, rgba(167,139,250,.22) 0%, rgba(244,114,182,.18) 100%);
+  border: 1.5px solid var(--accent-1);
+  border-radius: 14px;
+  padding: 22px 28px;
+  display: flex; align-items: center; gap: 18px;
+  cursor: pointer;
+  text-decoration: none; color: inherit;
+  transition: all .2s;
+  box-shadow: 0 8px 28px rgba(167,139,250,.18);
+}
+.game-hero:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(167,139,250,.32);
+  border-color: var(--accent-2);
+}
+.game-hero .icon { font-size: 38px; }
+.game-hero .meta { flex: 1; text-align: left; }
+.game-hero .meta .ttl {
+  font-size: 16px; font-weight: 700; color: var(--text);
+  letter-spacing: -.2px;
+}
+.game-hero .meta .desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; line-height: 1.5; }
+.game-hero .arrow {
+  font-size: 20px; color: var(--accent-2);
+  transition: transform .2s;
+}
+.game-hero:hover .arrow { transform: translateX(4px); }
 
 .quick-actions {
   margin-top: 28px;
@@ -495,42 +592,54 @@ body.edit-mode .edit-bar { display: flex; }
   <!-- ============= SIDEBAR ============= -->
   <aside class="sidebar">
     <div class="sidebar-header">
+      <div class="head-toggles">
+        <button class="icon-btn" id="btn-print" type="button" title="Print current view">
+          <span class="ic">🖨</span><span class="lbl" data-i18n="print">PRINT</span>
+        </button>
+        <button class="icon-btn" id="btn-theme" type="button" title="Toggle dark / light">
+          <span class="ic" id="theme-icon">🌙</span><span class="lbl" id="theme-lbl" data-i18n="dark">DARK</span>
+        </button>
+        <button class="icon-btn" id="btn-lang" type="button" title="Korean / English">
+          <span class="ic">🌏</span><span class="lbl" id="lang-lbl">EN</span>
+        </button>
+      </div>
+
       <div class="brand">
         <div class="brand-mark">D</div>
-        <div class="brand-text"><b>NEWTON</b> · LIVE CLASSROOM</div>
+        <div class="brand-text"><b>NEWTON</b> · <span data-i18n="live_classroom">LIVE CLASSROOM</span></div>
       </div>
       <h1 class="student-name">Declan Jee</h1>
-      <div class="student-meta">Grade 6 · Dwight-Englewood · Math</div>
+      <div class="student-meta" data-i18n="student_meta">Grade 6 · Dwight-Englewood · Math</div>
 
       <div class="stats">
         <div class="stat">
           <div class="stat-num" id="stat-lessons">0</div>
-          <div class="stat-label">LESSONS</div>
+          <div class="stat-label" data-i18n="lessons">LESSONS</div>
         </div>
         <div class="stat">
           <div class="stat-num" id="stat-files">0</div>
-          <div class="stat-label">FILES</div>
+          <div class="stat-label" data-i18n="files">FILES</div>
         </div>
         <div class="stat">
           <div class="stat-num" id="stat-months">0</div>
-          <div class="stat-label">MONTHS</div>
+          <div class="stat-label" data-i18n="months">MONTHS</div>
         </div>
       </div>
 
       <button class="edit-toggle" id="edit-toggle" type="button">
         <span class="edit-icon">✎</span>
-        <span>EDIT MODE</span>
+        <span data-i18n="edit_mode">EDIT MODE</span>
         <span class="edit-count" id="edit-count">0 hidden</span>
       </button>
     </div>
 
     <div class="edit-bar" id="edit-bar">
-      <span>Check items to <b>hide</b> from the menu.</span>
-      <button class="mini-btn" id="reset-hidden">Reset all</button>
+      <span data-i18n="edit_help">Check items to <b>hide</b> from the menu.</span>
+      <button class="mini-btn" id="reset-hidden" data-i18n="reset_all">Reset all</button>
     </div>
 
     <div class="search-wrap">
-      <input class="search" id="search" type="text" placeholder="Search topic, file, date…" />
+      <input class="search" id="search" type="text" data-i18n-placeholder="search_ph" placeholder="Search topic, file, date…" />
     </div>
 
     <nav class="nav" id="nav"></nav>
@@ -541,7 +650,7 @@ body.edit-mode .edit-bar { display: flex; }
     <div class="viewer-toolbar">
       <div class="crumb" id="crumb">
         <span>📚</span>
-        <span>Select a lesson on the left</span>
+        <span data-i18n="select_a_lesson">Select a lesson on the left</span>
       </div>
       <div class="toolbar-actions" id="toolbar-actions"></div>
     </div>
@@ -549,11 +658,22 @@ body.edit-mode .edit-bar { display: flex; }
 
     <div class="viewer-empty" id="viewer-empty">
       <div class="hero">📐</div>
-      <h2>Declan's Lesson Library</h2>
-      <p>Pick a date on the left, then a worksheet or answer key. Past PDFs and today's HTML render in the panel — click <b>Open</b> in the toolbar to pop out for printing.</p>
+      <h2 data-i18n="library_title">Declan's Lesson Library</h2>
+      <p data-i18n="library_desc">Pick a date on the left, then a worksheet or answer key. Past PDFs and today's HTML render in the panel — click <b>Open</b> in the toolbar to pop out for printing.</p>
+
+      <a class="game-hero" href="game/index.html" target="_blank">
+        <span class="icon">🎮</span>
+        <div class="meta">
+          <div class="ttl" data-i18n="game_title">Declan's Equation Dojo</div>
+          <div class="desc" data-i18n="game_desc">Battle monsters by solving equations &amp; negative-fraction problems. Streaks, lives, levels.</div>
+        </div>
+        <span class="arrow">→</span>
+      </a>
 
       <div class="quick-actions" id="quick-actions"></div>
     </div>
+
+    <div class="toast" id="toast"></div>
 
     <iframe class="viewer-frame" id="viewer-frame" style="display:none"></iframe>
   </main>
@@ -805,11 +925,6 @@ const MANIFEST = /*MANIFEST_START*/[
     "topic": "Pre-Algebra · Linear Graphs, Slope & Equation Solving (Infinite 30Q)",
     "files": [
       {
-        "name": "class-notes.md",
-        "ext": "md",
-        "size_kb": 3.1
-      },
-      {
         "name": "Declan Jee hw 4-25.pdf",
         "ext": "pdf",
         "size_kb": 63.1
@@ -818,11 +933,6 @@ const MANIFEST = /*MANIFEST_START*/[
         "name": "DeclanJee-2026-04-25-PreAlgebra_Homework-LinearGraphsSlopeAndEquationSolving.pdf",
         "ext": "pdf",
         "size_kb": 63.1
-      },
-      {
-        "name": "FOLLOW-UP.md",
-        "ext": "md",
-        "size_kb": 2.0
       }
     ]
   },
@@ -917,6 +1027,91 @@ document.getElementById("stat-lessons").textContent = MANIFEST.length;
 document.getElementById("stat-files").textContent = totalFiles;
 document.getElementById("stat-months").textContent = sortedMonths.length;
 
+// ---------- i18n ----------
+const I18N = {
+  en: {
+    print: "PRINT", dark: "DARK", light: "LIGHT",
+    live_classroom: "LIVE CLASSROOM",
+    student_meta: "Grade 6 · Dwight-Englewood · Math",
+    lessons: "LESSONS", files: "FILES", months: "MONTHS",
+    edit_mode: "EDIT MODE",
+    edit_help: "Check items to <b>hide</b> from the menu.",
+    reset_all: "Reset all",
+    search_ph: "Search topic, file, date…",
+    select_a_lesson: "Select a lesson on the left",
+    library_title: "Declan's Lesson Library",
+    library_desc: "Pick a date on the left, then a worksheet or answer key. Past PDFs and today's HTML render in the panel — click <b>Open</b> in the toolbar to pop out for printing.",
+    open_btn: "↗ Open", print_btn: "🖨 Print",
+    today_badge: "TODAY",
+    n_hidden: (n) => `${n} hidden`,
+    nothing_to_print: "No file open — pick a worksheet first.",
+    lang_switched: "Language: English",
+    game_title: "Declan's Equation Dojo",
+    game_desc: "Battle monsters by solving equations &amp; negative-fraction problems. Streaks, lives, levels."
+  },
+  ko: {
+    print: "인쇄", dark: "다크", light: "라이트",
+    live_classroom: "라이브 클래스룸",
+    student_meta: "6학년 · Dwight-Englewood · 수학",
+    lessons: "수업", files: "자료", months: "달",
+    edit_mode: "편집 모드",
+    edit_help: "메뉴에서 <b>숨길</b> 항목을 체크하세요.",
+    reset_all: "전체 해제",
+    search_ph: "주제·파일·날짜 검색…",
+    select_a_lesson: "왼쪽에서 수업을 선택하세요",
+    library_title: "Declan 수업 자료실",
+    library_desc: "왼쪽에서 날짜를 고르고 워크시트나 정답지를 선택하세요. 옛날 PDF 와 오늘 HTML 모두 이 패널에 표시됩니다 — 인쇄하려면 툴바의 <b>열기</b> 버튼을 누르세요.",
+    open_btn: "↗ 열기", print_btn: "🖨 인쇄",
+    today_badge: "오늘",
+    n_hidden: (n) => `${n}개 숨김`,
+    nothing_to_print: "열린 자료가 없습니다 — 워크시트를 먼저 선택하세요.",
+    lang_switched: "언어: 한국어",
+    game_title: "Declan 방정식 도장",
+    game_desc: "방정식과 음수 분수 문제를 풀어 몬스터를 쓰러뜨리세요. 스트릭·라이프·레벨 시스템."
+  }
+};
+const PREF_KEY = "declan-lesson-library-prefs-v1";
+const prefs = (() => {
+  try { return JSON.parse(localStorage.getItem(PREF_KEY) || "{}"); }
+  catch { return {}; }
+})();
+const savePrefs = () => localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
+
+let lang = prefs.lang || "ko";
+let theme = prefs.theme || "dark";
+
+const t = (key, ...args) => {
+  const v = I18N[lang][key];
+  return typeof v === "function" ? v(...args) : (v ?? key);
+};
+
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.innerHTML = t(el.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  document.documentElement.lang = lang;
+  document.getElementById("lang-lbl").textContent = lang === "ko" ? "KO" : "EN";
+}
+
+function applyTheme() {
+  document.body.classList.toggle("theme-light", theme === "light");
+  document.getElementById("theme-icon").textContent = theme === "light" ? "☀️" : "🌙";
+  document.getElementById("theme-lbl").textContent = t(theme);
+}
+
+// ---------- Toast ----------
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.innerHTML = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+}
+
 // ---------- Hidden items (Edit mode) ----------
 // Default behavior: dates BEFORE today are auto-hidden on first load.
 // User can flip Edit mode and uncheck to bring any past lesson back.
@@ -936,7 +1131,7 @@ if (stored === null) {
 const saveHidden = () => localStorage.setItem(HIDE_KEY, JSON.stringify([...hiddenSet]));
 const isHidden = (key) => hiddenSet.has(key);
 const updateHiddenCount = () => {
-  document.getElementById("edit-count").textContent = `${hiddenSet.size} hidden`;
+  document.getElementById("edit-count").textContent = t("n_hidden", hiddenSet.size);
 };
 
 // ---------- Render nav ----------
@@ -970,7 +1165,7 @@ sortedMonths.forEach((m, idx) => {
           <div class="date-label">
             <span>${entry.date.slice(5)}</span>
             <span class="day-of-week">${dayOfWeek(entry.date)}</span>
-            ${isToday?'<span class="today-badge">TODAY</span>':''}
+            ${isToday?`<span class="today-badge">${t("today_badge")}</span>`:''}
           </div>
           <div class="date-topic">${entry.topic}</div>
         </div>
@@ -1133,9 +1328,25 @@ function openFile(path, ext) {
 
   crumb.innerHTML = `<span>📐</span><span>${date}</span><span class="sep">›</span><b>${fileName}</b>`;
   toolbarActions.innerHTML = `
-    <button class="btn" onclick="window.open('${path}','_blank')">↗ Open</button>
-    <button class="btn primary" onclick="document.getElementById('viewer-frame').contentWindow.print()">🖨 Print</button>
+    <button class="btn" onclick="window.open('${path}','_blank')">${t("open_btn")}</button>
+    <button class="btn primary" onclick="printCurrent()">${t("print_btn")}</button>
   `;
+}
+
+// ---------- Global print ----------
+function printCurrent() {
+  if (frame.style.display !== "block") {
+    toast(t("nothing_to_print"));
+    return;
+  }
+  try {
+    frame.contentWindow.focus();
+    frame.contentWindow.print();
+  } catch (_) {
+    // fallback: open in new tab so user can print there
+    if (frame.src) window.open(frame.src, "_blank");
+    else toast(t("nothing_to_print"));
+  }
 }
 
 // ---------- Search ----------
@@ -1152,17 +1363,40 @@ document.getElementById("search").addEventListener("input", (e) => {
   });
 });
 
+// ---------- Header toggle wiring ----------
+document.getElementById("btn-print").addEventListener("click", printCurrent);
+
+document.getElementById("btn-theme").addEventListener("click", () => {
+  theme = theme === "light" ? "dark" : "light";
+  prefs.theme = theme;
+  savePrefs();
+  applyTheme();
+});
+
+document.getElementById("btn-lang").addEventListener("click", () => {
+  lang = lang === "ko" ? "en" : "ko";
+  prefs.lang = lang;
+  savePrefs();
+  applyI18n();
+  // re-render dynamic strings: edit-count + active toolbar buttons
+  updateHiddenCount();
+  applyTheme(); // re-apply theme label since it depends on lang
+  // re-render TODAY badges in nav
+  document.querySelectorAll(".today-badge").forEach(el => el.textContent = t("today_badge"));
+  // re-render toolbar buttons if a file is open
+  const active = document.querySelector(".file-item.active");
+  if (active) openFile(active.dataset.path, active.dataset.ext);
+  toast(t("lang_switched"));
+});
+
+// ---------- Apply preferences on load ----------
+applyI18n();
+applyTheme();
+
 // ---------- Auto-open today's worksheet on first load ----------
 window.addEventListener("DOMContentLoaded", () => {
   const todayItem = document.querySelector(".date-item.today");
-  if (todayItem) {
-    todayItem.scrollIntoView({block:"center"});
-    const ws = todayItem.querySelector('.file-item[data-path*="Worksheet"]');
-    if (ws) {
-      // don't auto-open by default — let Kenny click. Just highlight.
-      // ws.click();
-    }
-  }
+  if (todayItem) todayItem.scrollIntoView({block:"center"});
 });
 </script>
 </body>

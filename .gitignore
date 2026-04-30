@@ -6,3 +6,10 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+
+# Private teacher / parent info — never publish to public Pages
+profile.md
+class-log.md
+homework-index.md
+**/FOLLOW-UP.md
+**/class-notes.md
