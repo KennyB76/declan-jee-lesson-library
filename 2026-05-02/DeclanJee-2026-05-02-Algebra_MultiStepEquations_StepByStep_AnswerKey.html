@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Multi-Step Equations: Solve Line-by-Line — ANSWER KEY — Declan Jee</title>
+<script>
+window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    startup: { ready: () => { MathJax.startup.defaultReady(); } }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+/* ===== base-print.css ===== */
+@page { size: letter; margin: 0.5in; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fafafa; }
+body { font-family: 'Century Schoolbook', 'Times New Roman', serif; color: #000; }
+.page { max-width: 720px; margin: 0 auto; padding: 70px 50px 40px 50px; background: #fff; }
+.page-break { page-break-before: always; break-before: page; }
+@media print {
+    html, body { background: #fff; }
+    .page { max-width: none; padding: 0.7in 0.6in 0.5in 0.6in; margin: 0; box-shadow: none; }
+    .answer-block { page-break-inside: avoid; break-inside: avoid; }
+    .part-header, .problem-header, h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+    .page-break { page-break-before: always; break-before: page; }
+}
+
+/* ===== theme-boy.css ===== */
+:root {
+    --color-primary: #1565c0;
+    --color-primary-dark: #0d47a1;
+    --color-accent: #00838f;
+    --color-header-border: #1565c0;
+    --color-final-answer: #2e7d32;
+    --color-warning: #c62828;
+    --color-tag-border: #1565c0;
+    --color-tag-text: #1565c0;
+    --color-muted: #555;
+    --color-rule: #ccc;
+}
+
+/* ===== level-middle.css (Answer Key) ===== */
+body { font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.5; }
+.header {
+    text-align: center; padding-bottom: 12px; margin-bottom: 18px;
+    border-bottom: 2px solid var(--color-header-border);
+}
+.school-name { font-size: 9pt; letter-spacing: 4px; color: var(--color-primary); font-weight: bold; }
+.subject-tag, .key-tag {
+    display: inline-block; padding: 2px 10px; font-size: 8pt; letter-spacing: 2px;
+    margin: 5px 3px 8px 3px; font-weight: bold;
+}
+.subject-tag { border: 1.5px solid var(--color-primary); color: var(--color-primary); }
+.key-tag { border: 1.5px solid var(--color-warning); color: var(--color-warning); }
+h1 { font-size: 14pt; margin: 6px 0 10px 0; font-weight: bold; line-height: 1.3; }
+.info { display: flex; justify-content: space-between; font-size: 10pt; margin-top: 6px; }
+.standard { font-size: 8pt; font-style: italic; margin-top: 5px; color: var(--color-muted); }
+
+.part-header {
+    font-size: 12pt; font-weight: bold; color: var(--color-primary);
+    margin: 18px 0 6px 0; padding-bottom: 3px;
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.answer-block {
+    margin: 12px 0; padding: 10px 14px;
+    border: 1px solid #ddd; border-radius: 4px;
+}
+.problem-header { font-weight: bold; color: var(--color-primary); font-size: 11pt; margin-bottom: 5px; }
+.problem-text {
+    font-size: 11pt; padding: 6px 10px; background: #f7f7f7;
+    border-left: 3px solid #bbb; margin-bottom: 8px; line-height: 1.5;
+}
+.concept-tag {
+    display: inline-block; font-size: 8pt; padding: 2px 8px; margin: 2px 3px 5px 0;
+    border: 1px solid var(--color-tag-border); color: var(--color-tag-text); border-radius: 10px;
+}
+.solution { margin: 6px 0; padding-left: 10px; border-left: 3px solid var(--color-final-answer); }
+.solution-step { margin: 3px 0; font-size: 10pt; line-height: 1.7; }
+.solution-step .reason {
+    color: var(--color-muted);
+    font-style: italic;
+    font-size: 9pt;
+    margin-left: 8px;
+}
+.final-answer {
+    display: inline-block; border: 2px solid var(--color-final-answer);
+    color: var(--color-final-answer); font-weight: bold;
+    padding: 4px 12px; border-radius: 4px; margin-top: 6px; font-size: 11pt;
+}
+
+.footer {
+    text-align: center; font-size: 8pt; color: #666;
+    border-top: 1px solid var(--color-rule); margin-top: 22px; padding-top: 6px;
+}
+
+@media print { * { background: transparent !important; } .problem-text { background: #f0f0f0 !important; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+    <!-- ============== HEADER ============== -->
+    <div class="header">
+        <div class="school-name">N E W T O N &nbsp; S C H O O L</div>
+        <span class="subject-tag">ALGEBRA</span>
+        <span class="key-tag">ANSWER KEY</span>
+        <h1>Multi-Step Equations: Solve Line-by-Line</h1>
+        <div class="info">
+            <span><strong>Student:</strong> Declan Jee</span>
+            <span><strong>Date:</strong> 2026-05-02</span>
+        </div>
+        <div class="standard">
+            <strong>Teaching Goal:</strong> Show every step on its own line. Each line should
+            change exactly one thing — distribute, combine, +/−, ×/÷.
+        </div>
+    </div>
+
+    <!-- ============== PART A ============== -->
+    <div class="part-header">Part A &nbsp;·&nbsp; Two-Step Equations</div>
+
+    <!-- Problem 1 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 1</div>
+        <div class="problem-text">\(4y + 7 = 23\)</div>
+        <span class="concept-tag">Two-step</span>
+        <span class="concept-tag">Subtract first</span>
+        <div class="solution">
+            <div class="solution-step">\(4y + 7 = 23\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(4y = 23 - 7\) <span class="reason">— subtract 7 from both sides</span></div>
+            <div class="solution-step">\(4y = 16\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(y = \dfrac{16}{4}\) <span class="reason">— divide both sides by 4</span></div>
+            <div class="solution-step">\(y = 4\)</div>
+        </div>
+        <div class="final-answer">y = 4</div>
+    </div>
+
+    <!-- Problem 2 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 2</div>
+        <div class="problem-text">\(-\dfrac{1}{3}b + 5 = 1\)</div>
+        <span class="concept-tag">Two-step</span>
+        <span class="concept-tag">Fraction coefficient</span>
+        <div class="solution">
+            <div class="solution-step">\(-\dfrac{1}{3}b + 5 = 1\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(-\dfrac{1}{3}b = 1 - 5\) <span class="reason">— subtract 5 both sides</span></div>
+            <div class="solution-step">\(-\dfrac{1}{3}b = -4\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(b = -4 \cdot (-3)\) <span class="reason">— multiply both sides by −3 (reciprocal)</span></div>
+            <div class="solution-step">\(b = 12\)</div>
+        </div>
+        <div class="final-answer">b = 12</div>
+    </div>
+
+    <!-- Problem 3 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 3</div>
+        <div class="problem-text">\(\dfrac{2n}{5} = -8\)</div>
+        <span class="concept-tag">One-step</span>
+        <span class="concept-tag">Fraction coefficient</span>
+        <div class="solution">
+            <div class="solution-step">\(\dfrac{2n}{5} = -8\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(2n = -8 \cdot 5\) <span class="reason">— multiply both sides by 5</span></div>
+            <div class="solution-step">\(2n = -40\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(n = \dfrac{-40}{2}\) <span class="reason">— divide both sides by 2</span></div>
+            <div class="solution-step">\(n = -20\)</div>
+        </div>
+        <div class="final-answer">n = −20</div>
+    </div>
+
+    <!-- ============== PART B ============== -->
+    <div class="part-header page-break">Part B &nbsp;·&nbsp; Combine Like Terms First</div>
+
+    <!-- Problem 4 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 4</div>
+        <div class="problem-text">\(-3x + 8x = -25\)</div>
+        <span class="concept-tag">Combine like terms</span>
+        <span class="concept-tag">Same side</span>
+        <div class="solution">
+            <div class="solution-step">\(-3x + 8x = -25\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(5x = -25\) <span class="reason">— combine like terms (−3 + 8 = 5)</span></div>
+            <div class="solution-step">\(x = \dfrac{-25}{5}\) <span class="reason">— divide both sides by 5</span></div>
+            <div class="solution-step">\(x = -5\)</div>
+        </div>
+        <div class="final-answer">x = −5</div>
+    </div>
+
+    <!-- Problem 5 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 5</div>
+        <div class="problem-text">\(12 = 6m - 2 + m\)</div>
+        <span class="concept-tag">Combine like terms</span>
+        <span class="concept-tag">Two-step</span>
+        <div class="solution">
+            <div class="solution-step">\(12 = 6m - 2 + m\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(12 = 7m - 2\) <span class="reason">— combine like terms (6m + m = 7m)</span></div>
+            <div class="solution-step">\(12 + 2 = 7m\) <span class="reason">— add 2 to both sides</span></div>
+            <div class="solution-step">\(14 = 7m\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(\dfrac{14}{7} = m\) <span class="reason">— divide both sides by 7</span></div>
+            <div class="solution-step">\(m = 2\)</div>
+        </div>
+        <div class="final-answer">m = 2</div>
+    </div>
+
+    <!-- ============== PART C ============== -->
+    <div class="part-header">Part C &nbsp;·&nbsp; Distribute First, Then Solve</div>
+
+    <!-- Problem 6 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 6</div>
+        <div class="problem-text">\(3(x - 2) = 18\)</div>
+        <span class="concept-tag">Distributive property</span>
+        <span class="concept-tag">Two-step</span>
+        <div class="solution">
+            <div class="solution-step">\(3(x - 2) = 18\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(3x - 6 = 18\) <span class="reason">— distribute the 3</span></div>
+            <div class="solution-step">\(3x = 18 + 6\) <span class="reason">— add 6 to both sides</span></div>
+            <div class="solution-step">\(3x = 24\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(x = \dfrac{24}{3}\) <span class="reason">— divide both sides by 3</span></div>
+            <div class="solution-step">\(x = 8\)</div>
+        </div>
+        <div class="final-answer">x = 8</div>
+    </div>
+
+    <!-- Problem 7 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 7</div>
+        <div class="problem-text">\(-2(p + 5) = 14\)</div>
+        <span class="concept-tag">Distribute negative</span>
+        <span class="concept-tag">Sign care</span>
+        <div class="solution">
+            <div class="solution-step">\(-2(p + 5) = 14\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(-2p - 10 = 14\) <span class="reason">— distribute the −2 (watch the sign!)</span></div>
+            <div class="solution-step">\(-2p = 14 + 10\) <span class="reason">— add 10 to both sides</span></div>
+            <div class="solution-step">\(-2p = 24\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(p = \dfrac{24}{-2}\) <span class="reason">— divide both sides by −2</span></div>
+            <div class="solution-step">\(p = -12\)</div>
+        </div>
+        <div class="final-answer">p = −12</div>
+    </div>
+
+    <!-- ============== PART D ============== -->
+    <div class="part-header page-break">Part D &nbsp;·&nbsp; Distribute + One More Step</div>
+
+    <!-- Problem 8 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 8</div>
+        <div class="problem-text">\(4(k - 3) + 7 = -5\)</div>
+        <span class="concept-tag">Distribute</span>
+        <span class="concept-tag">Combine constants</span>
+        <div class="solution">
+            <div class="solution-step">\(4(k - 3) + 7 = -5\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(4k - 12 + 7 = -5\) <span class="reason">— distribute the 4</span></div>
+            <div class="solution-step">\(4k - 5 = -5\) <span class="reason">— combine constants (−12 + 7 = −5)</span></div>
+            <div class="solution-step">\(4k = -5 + 5\) <span class="reason">— add 5 to both sides</span></div>
+            <div class="solution-step">\(4k = 0\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(k = \dfrac{0}{4}\) <span class="reason">— divide both sides by 4</span></div>
+            <div class="solution-step">\(k = 0\)</div>
+        </div>
+        <div class="final-answer">k = 0</div>
+    </div>
+
+    <!-- Problem 9 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 9</div>
+        <div class="problem-text">\(5(c + 1) - 12 = -7\)</div>
+        <span class="concept-tag">Distribute</span>
+        <span class="concept-tag">Combine constants</span>
+        <div class="solution">
+            <div class="solution-step">\(5(c + 1) - 12 = -7\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(5c + 5 - 12 = -7\) <span class="reason">— distribute the 5</span></div>
+            <div class="solution-step">\(5c - 7 = -7\) <span class="reason">— combine constants (5 − 12 = −7)</span></div>
+            <div class="solution-step">\(5c = -7 + 7\) <span class="reason">— add 7 to both sides</span></div>
+            <div class="solution-step">\(5c = 0\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(c = \dfrac{0}{5}\) <span class="reason">— divide both sides by 5</span></div>
+            <div class="solution-step">\(c = 0\)</div>
+        </div>
+        <div class="final-answer">c = 0</div>
+    </div>
+
+    <!-- Problem 10 -->
+    <div class="answer-block">
+        <div class="problem-header">Problem 10</div>
+        <div class="problem-text">\(2d + 3(d - 4) = -27\)</div>
+        <span class="concept-tag">Distribute</span>
+        <span class="concept-tag">Combine variables</span>
+        <span class="concept-tag">Hardest</span>
+        <div class="solution">
+            <div class="solution-step">\(2d + 3(d - 4) = -27\) <span class="reason">— given</span></div>
+            <div class="solution-step">\(2d + 3d - 12 = -27\) <span class="reason">— distribute the 3 (only inside parens)</span></div>
+            <div class="solution-step">\(5d - 12 = -27\) <span class="reason">— combine like terms (2d + 3d = 5d)</span></div>
+            <div class="solution-step">\(5d = -27 + 12\) <span class="reason">— add 12 to both sides</span></div>
+            <div class="solution-step">\(5d = -15\) <span class="reason">— simplify</span></div>
+            <div class="solution-step">\(d = \dfrac{-15}{5}\) <span class="reason">— divide both sides by 5</span></div>
+            <div class="solution-step">\(d = -3\)</div>
+        </div>
+        <div class="final-answer">d = −3</div>
+    </div>
+
+    <div class="footer">
+        Created by Newton School &nbsp;·&nbsp; 2026-05-02 &nbsp;·&nbsp; Answer Key &nbsp;·&nbsp; &copy; Copyright
+    </div>
+
+</div>
+</body>
+</html>

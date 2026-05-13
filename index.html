@@ -1,1403 +1,378 @@
 <!DOCTYPE html>
-<html lang="ko">
+<!--
+  STUDENT PORTAL STANDARD (PDF popup) — Newton School / Live Classroom — Kenny portal v2 (2026-05-13)
+  Student: Declan Jee
+  Theme: forest green (#2e7d6b / #e0f2ef / #1b4d3e / #f5faf9)
+-->
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Declan Jee · Lesson Library</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Declan Jee · Newton School Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #09090b;
-  --bg-grad-1: rgba(167, 139, 250, .14);
-  --bg-grad-2: rgba(244, 114, 182, .10);
-  --card: #18181b;
-  --card-hover: #1f1f23;
-  --border: #27272a;
-  --border-strong: #3f3f46;
-  --text: #f4f4f5;
-  --text-dim: #a1a1aa;
-  --text-muted: #71717a;
-  --accent-1: #a78bfa;
-  --accent-2: #f472b6;
-  --accent-3: #6366f1;
-  --green: #4ade80;
-  --amber: #fbbf24;
-  --red: #f87171;
-  --sidebar-bg: rgba(15, 15, 17, .85);
-  --viewer-bg: #0c0c0e;
-  --grad: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
-  --sidebar-w: 380px;
-  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-}
+  :root {
+    --student: #2e7d6b;
+    --student-soft: #e0f2ef;
+    --student-deep: #1b4d3e;
+    --ink: #1a1a1a;
+    --ink-soft: #555;
+    --paper: #ffffff;
+    --bg: #f5faf9;
+    --line: #e8e8e8;
+    --serif: 'Playfair Display', 'Noto Serif KR', Georgia, serif;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.6; }
+  body.modal-open { overflow: hidden; }
+  .container { max-width: 680px; margin: 0 auto; background: var(--paper); box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+  .masthead { text-align: center; padding: 48px 32px 24px; border-bottom: 3px double var(--student); }
+  .masthead .school { font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--student-deep); font-weight: 600; margin-bottom: 12px; }
+  .masthead h1 { font-family: var(--serif); font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 6px; }
+  .masthead .subtitle { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-soft); }
+  .masthead .info { margin-top: 18px; font-size: 12px; color: var(--ink-soft); letter-spacing: 0.05em; }
+  .masthead .info span { margin: 0 8px; }
+  section { padding: 28px 32px; border-bottom: 1px solid var(--line); }
+  section .label { font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--student-deep); font-weight: 600; margin-bottom: 8px; }
+  section h2 { font-family: var(--serif); font-size: 24px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
 
-body.theme-light {
-  --bg: #f7f5fb;
-  --bg-grad-1: rgba(167, 139, 250, .18);
-  --bg-grad-2: rgba(244, 114, 182, .14);
-  --card: #ffffff;
-  --card-hover: #f4f0fb;
-  --border: #e6e3ee;
-  --border-strong: #c9c3d8;
-  --text: #1c1730;
-  --text-dim: #564f6b;
-  --text-muted: #8b85a0;
-  --accent-1: #7c5cf2;
-  --accent-2: #db4f95;
-  --sidebar-bg: rgba(255, 255, 255, .92);
-  --viewer-bg: #faf7ff;
-}
+  /* Timeline */
+  ul.timeline { list-style: none; padding-left: 16px; border-left: 2px solid var(--student); }
+  ul.timeline li { padding: 10px 0 10px 16px; position: relative; font-size: 13px; display: flex; align-items: baseline; gap: 0; flex-wrap: wrap; }
+  ul.timeline li::before { content: ""; position: absolute; left: -22px; top: 16px; width: 8px; height: 8px; border-radius: 50%; background: var(--student); }
+  ul.timeline .date { font-weight: 600; color: var(--student-deep); margin-right: 8px; white-space: nowrap; flex-shrink: 0; }
+  .popup-link { font-weight: 500; color: var(--ink); text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.15s; cursor: pointer; }
+  .popup-link:hover { color: var(--student-deep); border-bottom-color: var(--student); }
+  .pdf-badge { display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; background: var(--student-soft); color: var(--student-deep); border-radius: 3px; padding: 1px 5px; vertical-align: middle; }
+  .onenote-badge { display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; background: #f3e5f5; color: #7b1fa2; border-radius: 3px; padding: 1px 5px; vertical-align: middle; }
+  .final-badge { display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; background: var(--student-soft); color: var(--student-deep); border: 1px solid var(--student); border-radius: 3px; padding: 1px 5px; vertical-align: middle; }
+  .plain-label { font-weight: 500; color: var(--ink); }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  .teacher-note { background: var(--bg); padding: 16px 20px; border-radius: 8px; border-left: 3px solid var(--student); font-style: italic; color: var(--ink); font-size: 14px; line-height: 1.7; }
 
-html, body {
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Pretendard Variable', Pretendard, -apple-system, system-ui, sans-serif;
-  font-feature-settings: 'tnum', 'ss01';
-  overflow: hidden;
-}
+  footer { text-align: center; padding: 32px; font-size: 11px; color: var(--ink-soft); }
+  footer .copyright { margin-top: 8px; font-style: italic; }
 
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 0% 0%, var(--bg-grad-1) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 50% at 100% 100%, var(--bg-grad-2) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.app {
-  display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr;
-  height: 100vh;
-  position: relative;
-  z-index: 1;
-}
-
-/* ====================== Sidebar ====================== */
-.sidebar {
-  background: var(--sidebar-bg);
-  backdrop-filter: blur(12px);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* ====================== Header toggles (Print/Theme/Lang) ====================== */
-.head-toggles {
-  display: flex; gap: 6px;
-  margin-bottom: 14px;
-}
-.head-toggles .icon-btn {
-  flex: 1;
-  display: flex; align-items: center; justify-content: center; gap: 5px;
-  padding: 7px 8px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 11px; font-weight: 600;
-  font-family: inherit;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all .15s;
-}
-.head-toggles .icon-btn:hover {
-  color: var(--text);
-  border-color: var(--accent-1);
-  transform: translateY(-1px);
-}
-.head-toggles .icon-btn .ic { font-size: 13px; }
-.head-toggles .icon-btn .lbl {
-  font-family: var(--mono); font-size: 9px; letter-spacing: .5px;
-}
-
-.sidebar-header {
-  padding: 22px 22px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.brand {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 12px;
-}
-.brand-mark {
-  width: 32px; height: 32px;
-  background: var(--grad);
-  border-radius: 8px;
-  display: grid; place-items: center;
-  font-weight: 700; color: #fff;
-  box-shadow: 0 4px 16px rgba(167, 139, 250, .35);
-}
-.brand-text { font-size: 11px; letter-spacing: 2px; color: var(--text-muted); font-weight: 600; }
-.brand-text b { color: var(--text); }
-
-h1.student-name {
-  font-size: 20px; letter-spacing: -.4px; font-weight: 700;
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-bottom: 2px;
-}
-.student-meta {
-  font-size: 12px; color: var(--text-dim);
-  font-family: var(--mono);
-  letter-spacing: .2px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-  margin-top: 14px;
-}
-.stat {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
-  text-align: center;
-}
-.stat-num {
-  font-family: var(--mono); font-weight: 700; font-size: 16px;
-  background: var(--grad);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.stat-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; letter-spacing: .5px; }
-
-.search-wrap {
-  padding: 12px 16px 0;
-}
-.search {
-  width: 100%;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 9px 12px 9px 32px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-  outline: none;
-  transition: border-color .2s;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23a1a1aa' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 10px center;
-}
-.search:focus { border-color: var(--accent-1); }
-
-.nav {
-  flex: 1;
-  overflow-y: auto;
-  padding: 14px 8px 24px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
-}
-.nav::-webkit-scrollbar { width: 8px; }
-.nav::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
-
-.month-group { margin-bottom: 4px; }
-.month-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 14px;
-  font-size: 11px; letter-spacing: 1.5px;
-  color: var(--text-muted); font-weight: 700;
-  cursor: pointer;
-  border-radius: 6px;
-  user-select: none;
-}
-.month-header:hover { color: var(--text); background: rgba(255,255,255,.02); }
-.month-header .chev { transition: transform .2s; font-size: 10px; }
-.month-header.collapsed .chev { transform: rotate(-90deg); }
-.month-count {
-  font-family: var(--mono); font-size: 10px;
-  background: var(--card); border: 1px solid var(--border);
-  padding: 1px 6px; border-radius: 10px;
-  color: var(--text-dim);
-}
-
-.month-body { display: flex; flex-direction: column; gap: 2px; }
-.month-body.hidden { display: none; }
-
-.date-item {
-  border: 1px solid transparent;
-  border-radius: 8px;
-  margin: 0 6px;
-  overflow: hidden;
-  transition: background .15s, border-color .15s;
-}
-.date-item:hover { background: var(--card); }
-.date-item.expanded { background: var(--card); border-color: var(--border); }
-
-.date-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
-  cursor: pointer;
-  user-select: none;
-}
-.date-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--text-muted);
-  flex-shrink: 0;
-}
-.date-item.today .date-dot {
-  background: var(--accent-2);
-  box-shadow: 0 0 0 0 rgba(244, 114, 182, .8);
-  animation: pulse-today 2s infinite;
-}
-@keyframes pulse-today {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(244,114,182,.7); }
-  50% { box-shadow: 0 0 0 6px rgba(244,114,182,0); }
-}
-.date-item.future .date-dot { background: var(--accent-1); }
-
-.date-info { flex: 1; min-width: 0; }
-.date-label {
-  font-family: var(--mono); font-size: 13px; font-weight: 600;
-  color: var(--text);
-  display: flex; align-items: center; gap: 8px;
-}
-.date-label .day-of-week { color: var(--text-muted); font-weight: 400; }
-.date-topic {
-  font-size: 11px; color: var(--text-dim);
-  margin-top: 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.date-files-count {
-  font-family: var(--mono); font-size: 10px;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.today-badge {
-  display: inline-block;
-  font-size: 9px; letter-spacing: 1px; font-weight: 700;
-  background: var(--grad);
-  color: #fff;
-  padding: 1px 6px; border-radius: 4px;
-  margin-left: 6px;
-}
-
-.file-list {
-  display: none;
-  flex-direction: column;
-  padding: 0 8px 10px 24px;
-  gap: 2px;
-}
-.date-item.expanded .file-list { display: flex; }
-
-.file-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px 10px;
-  font-size: 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: var(--text-dim);
-  border: 1px solid transparent;
-  transition: all .12s;
-}
-.file-item:hover { background: rgba(255,255,255,.04); color: var(--text); }
-.file-item.active {
-  background: linear-gradient(135deg, rgba(167,139,250,.18) 0%, rgba(244,114,182,.14) 100%);
-  border-color: rgba(167,139,250,.35);
-  color: var(--text);
-}
-.file-icon { font-size: 13px; flex-shrink: 0; width: 16px; }
-.file-name {
-  flex: 1; min-width: 0;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.file-size {
-  font-family: var(--mono); font-size: 9px; color: var(--text-muted); flex-shrink: 0;
-}
-
-.tag-pill {
-  font-family: var(--mono); font-size: 9px;
-  padding: 1px 5px; border-radius: 3px;
-  margin-right: 4px;
-}
-.tag-ws  { background: rgba(99,102,241,.15);  color: #818cf8; }
-.tag-ak  { background: rgba(74,222,128,.15);  color: #4ade80; }
-.tag-hw  { background: rgba(251,191,36,.15);  color: #fbbf24; }
-.tag-md  { background: rgba(244,114,182,.15); color: var(--accent-2); }
-
-/* ====================== Viewer ====================== */
-.viewer {
-  display: flex; flex-direction: column;
-  background: var(--viewer-bg);
-  overflow: hidden;
-}
-
-/* Toast for keyboard shortcut + print hints */
-.toast {
-  position: fixed;
-  bottom: 24px; right: 24px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  box-shadow: 0 10px 28px rgba(0,0,0,.35);
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity .25s, transform .25s;
-  z-index: 50;
-  pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translateY(0); }
-
-.viewer-toolbar {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 18px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(15,15,17,.75);
-  backdrop-filter: blur(8px);
-  min-height: 52px;
-}
-.crumb {
-  font-size: 12px; color: var(--text-dim);
-  display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;
-}
-.crumb .sep { color: var(--text-muted); }
-.crumb b {
-  color: var(--text);
-  font-family: var(--mono); font-weight: 600;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.toolbar-actions { display: flex; gap: 8px; }
-.btn {
-  background: var(--card); border: 1px solid var(--border);
-  color: var(--text-dim); font-size: 11px;
-  padding: 6px 12px; border-radius: 6px; cursor: pointer;
-  font-family: inherit; transition: all .15s;
-}
-.btn:hover { color: var(--text); border-color: var(--border-strong); }
-.btn.primary {
-  background: var(--grad); color: #fff; border: none;
-}
-.btn.primary:hover { filter: brightness(1.1); }
-
-.viewer-frame {
-  flex: 1;
-  border: 0; width: 100%;
-  background: #fafafa;
-}
-
-.viewer-empty {
-  flex: 1;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  padding: 40px;
-  color: var(--text-dim);
-}
-.viewer-empty .hero {
-  font-size: 56px; margin-bottom: 14px;
-  background: var(--grad);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.viewer-empty h2 {
-  font-size: 24px; font-weight: 700;
-  background: var(--grad);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  margin-bottom: 8px;
-}
-.viewer-empty p { font-size: 14px; max-width: 480px; line-height: 1.6; }
-
-.game-hero {
-  margin-top: 24px;
-  max-width: 560px; width: 100%;
-  background: linear-gradient(135deg, rgba(167,139,250,.22) 0%, rgba(244,114,182,.18) 100%);
-  border: 1.5px solid var(--accent-1);
-  border-radius: 14px;
-  padding: 22px 28px;
-  display: flex; align-items: center; gap: 18px;
-  cursor: pointer;
-  text-decoration: none; color: inherit;
-  transition: all .2s;
-  box-shadow: 0 8px 28px rgba(167,139,250,.18);
-}
-.game-hero:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 36px rgba(167,139,250,.32);
-  border-color: var(--accent-2);
-}
-.game-hero .icon { font-size: 38px; }
-.game-hero .meta { flex: 1; text-align: left; }
-.game-hero .meta .ttl {
-  font-size: 16px; font-weight: 700; color: var(--text);
-  letter-spacing: -.2px;
-}
-.game-hero .meta .desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; line-height: 1.5; }
-.game-hero .arrow {
-  font-size: 20px; color: var(--accent-2);
-  transition: transform .2s;
-}
-.game-hero:hover .arrow { transform: translateX(4px); }
-
-.quick-actions {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
-  max-width: 720px;
-  width: 100%;
-}
-.qa-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px 16px;
-  text-align: left; cursor: pointer;
-  transition: all .15s;
-}
-.qa-card:hover {
-  border-color: var(--accent-1);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(167,139,250,.15);
-}
-.qa-card .qa-icon { font-size: 22px; margin-bottom: 6px; }
-.qa-card .qa-title {
-  font-size: 13px; font-weight: 600; color: var(--text);
-  margin-bottom: 3px;
-}
-.qa-card .qa-meta {
-  font-family: var(--mono); font-size: 10px; color: var(--text-muted);
-}
-
-/* progress bar at top of viewer when iframe loads */
-.progress {
-  position: absolute; top: 52px; left: 0; right: 0; height: 2px;
-  background: var(--grad);
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform .25s;
-  pointer-events: none;
-  z-index: 10;
-}
-.progress.loading { transform: scaleX(.7); }
-.progress.done { transform: scaleX(1); opacity: 0; transition: opacity .3s; }
-
-/* ====================== Edit Mode ====================== */
-.edit-toggle {
-  display: flex; align-items: center; gap: 8px;
-  margin-top: 12px;
-  padding: 7px 12px;
-  width: 100%;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 11px; letter-spacing: .5px; font-weight: 600;
-  color: var(--text-dim);
-  font-family: inherit;
-  cursor: pointer;
-  transition: all .15s;
-}
-.edit-toggle:hover { color: var(--text); border-color: var(--accent-1); }
-.edit-toggle.on {
-  background: linear-gradient(135deg, rgba(167,139,250,.22), rgba(244,114,182,.18));
-  border-color: var(--accent-2);
-  color: #fff;
-}
-.edit-toggle .edit-icon { font-size: 13px; }
-.edit-toggle .edit-count {
-  margin-left: auto;
-  font-family: var(--mono); font-size: 9px;
-  background: rgba(0,0,0,.35);
-  padding: 1px 6px; border-radius: 8px;
-}
-
-.checkbox {
-  appearance: none; -webkit-appearance: none;
-  width: 14px; height: 14px;
-  border: 1.5px solid var(--border-strong);
-  border-radius: 3px;
-  background: var(--card);
-  cursor: pointer;
-  flex-shrink: 0;
-  position: relative;
-  transition: all .15s;
-  display: none;
-}
-body.edit-mode .checkbox { display: inline-block; }
-.checkbox:checked {
-  background: var(--grad);
-  border-color: transparent;
-}
-.checkbox:checked::after {
-  content: '✓';
-  position: absolute; inset: 0;
-  display: grid; place-items: center;
-  font-size: 11px; font-weight: 700; color: #fff;
-  line-height: 1;
-}
-.date-checkbox { margin-right: 6px; }
-.file-checkbox { margin-right: 4px; }
-
-/* Hidden items: only visible in edit mode */
-.date-item.hidden,
-.file-item.hidden { display: none; }
-body.edit-mode .date-item.hidden,
-body.edit-mode .file-item.hidden {
-  display: flex !important;
-  opacity: .45;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent, transparent 6px,
-    rgba(248,113,113,.06) 6px, rgba(248,113,113,.06) 12px
-  );
-}
-body.edit-mode .date-item.hidden { display: block !important; }
-body.edit-mode .date-item.hidden .date-row { opacity: .5; }
-
-body.edit-mode .file-item { cursor: default; }
-body.edit-mode .file-item:hover { background: rgba(255,255,255,.04); }
-
-.edit-bar {
-  display: none;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, rgba(167,139,250,.18) 0%, rgba(244,114,182,.12) 100%);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  font-size: 11px;
-  color: var(--text-dim);
-  align-items: center;
-  gap: 8px;
-}
-body.edit-mode .edit-bar { display: flex; }
-.edit-bar .mini-btn {
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  padding: 4px 9px; border-radius: 5px;
-  font-size: 10px; cursor: pointer; font-family: inherit;
-  transition: all .12s;
-}
-.edit-bar .mini-btn:hover { color: var(--text); border-color: var(--accent-1); }
-
-@media (max-width: 800px) {
-  .app { grid-template-columns: 1fr; }
-  .sidebar { position: fixed; inset: 0; z-index: 20; transform: translateX(-100%); transition: transform .25s; }
-  .sidebar.open { transform: translateX(0); }
-}
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(20,15,10,0.78);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: #fff; border-radius: 12px; width: 92vw; max-width: 1100px;
+    height: 92vh; display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .modal-header {
+    padding: 10px 16px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--serif); font-size: 14px; color: var(--ink-soft);
+    flex-shrink: 0;
+  }
+  .modal-header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .modal-title { font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .modal-esc { font-size: 11px; color: var(--ink-soft); opacity: 0.6; white-space: nowrap; }
+  .modal-close {
+    background: transparent; border: none; font-size: 22px; cursor: pointer;
+    color: var(--ink-soft); padding: 0 6px; flex-shrink: 0; line-height: 1;
+  }
+  .modal-close:hover { color: var(--student-deep); }
+  .modal-iframe { flex: 1; border: none; width: 100%; }
 </style>
 </head>
 <body>
+<div class="container">
 
-<div class="app">
+  <header class="masthead">
+    <div class="school">Newton School</div>
+    <h1>Declan Jee</h1>
+    <div class="subtitle">Pre-Algebra</div>
+    <div class="info">
+      <span>Grade 6</span>
+      <span>&middot;</span>
+      <span>Dwight-Englewood</span>
+      <span>&middot;</span>
+      <span>Mr. Kenny</span>
+    </div>
+  </header>
 
-  <!-- ============= SIDEBAR ============= -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="head-toggles">
-        <button class="icon-btn" id="btn-print" type="button" title="Print current view">
-          <span class="ic">🖨</span><span class="lbl" data-i18n="print">PRINT</span>
-        </button>
-        <button class="icon-btn" id="btn-theme" type="button" title="Toggle dark / light">
-          <span class="ic" id="theme-icon">🌙</span><span class="lbl" id="theme-lbl" data-i18n="dark">DARK</span>
-        </button>
-        <button class="icon-btn" id="btn-lang" type="button" title="Korean / English">
-          <span class="ic">🌏</span><span class="lbl" id="lang-lbl">EN</span>
-        </button>
+  <section>
+    <div class="label">Spring 2026 Timeline</div>
+    <h2>All Lessons &amp; Materials</h2>
+    <ul class="timeline">
+
+      <li>
+        <span class="date">5/2</span>
+        <span class="plain-label">Final Lesson &mdash; Multi-Step Equations</span>
+        <span class="final-badge">FINAL</span>
+        &nbsp;
+        <a class="popup-link"
+           data-src="2026-05-02/DeclanJee-2026-05-02-Algebra_MultiStepEquations_StepByStep_Worksheet.pdf"
+           data-fallback="2026-05-02/DeclanJee-2026-05-02-Algebra_MultiStepEquations_StepByStep_Worksheet.html">
+          Worksheet
+        </a>
+        <span class="pdf-badge">PDF</span>
+        &nbsp;
+        <a class="popup-link"
+           data-src="2026-05-02/DeclanJee-2026-05-02-Algebra_MultiStepEquations_StepByStep_AnswerKey.pdf"
+           data-fallback="2026-05-02/DeclanJee-2026-05-02-Algebra_MultiStepEquations_StepByStep_AnswerKey.html">
+          Answer Key
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">4/30</span>
+        <a class="popup-link"
+           data-src="2026-04-30/DeclanJee-2026-04-30-Math_Homework-EquationsDistributionVariablesBothSides_Worksheet.pdf"
+           data-fallback="2026-04-30/DeclanJee-2026-04-30-Math_Homework-EquationsDistributionVariablesBothSides_Worksheet.html">
+          Equations &mdash; Distribution &amp; Variables Both Sides
+        </a>
+        <span class="pdf-badge">PDF</span>
+        &nbsp;
+        <a class="popup-link"
+           data-src="2026-04-30/DeclanJee-2026-04-30-Math_Homework-FractionAddSubtractNegatives_Worksheet.pdf"
+           data-fallback="2026-04-30/DeclanJee-2026-04-30-Math_Homework-FractionAddSubtractNegatives_Worksheet.html">
+          Fractions &mdash; Add, Subtract &amp; Negatives
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">4/25</span>
+        <a class="popup-link"
+           data-src="2026-04-25/DeclanJee-2026-04-25-PreAlgebra_Homework-LinearGraphsSlopeAndEquationSolving.pdf">
+          Linear Graphs, Slope &amp; Equation Solving
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">4/23</span>
+        <a class="popup-link"
+           data-src="2026-04-23/Declan Jee 4-23 Homework.pdf">
+          Homework
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">4/18</span>
+        <a class="popup-link"
+           data-src="2026-04-18/Coordinate Plane & Slope Worksheet - Declan Jee.pdf">
+          Coordinate Plane &amp; Slope
+        </a>
+        <span class="pdf-badge">PDF</span>
+        &nbsp;
+        <a class="popup-link"
+           data-src="2026-04-18/Declan 4-18 Homework.pdf">
+          Homework
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">4/16</span>
+        <a class="popup-link"
+           data-src="2026-04-16/Declan HW 4162026.pdf">
+          Homework
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">4/11</span>
+        <a class="popup-link"
+           data-src="2026-04-11/Speed, Distance & Time Worksheet - Declan Jee.pdf">
+          Speed, Distance &amp; Time
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">4/9</span>
+        <a class="popup-link"
+           data-src="2026-04-09/Speed, Distance & Time Word Problems - Declan Jee.pdf">
+          Speed, Distance &amp; Time Word Problems
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">3/29</span>
+        <a class="popup-link"
+           data-src="2026-03-29/Declan Jee 3-29.pdf">
+          Lesson
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">3/26</span>
+        <a class="popup-link"
+           data-src="2026-03-26/HW Declan 3-26 Math Worksheet_ Multi-Step Equations & Word Problems.pdf">
+          Multi-Step Equations &amp; Word Problems
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">3/19</span>
+        <a class="popup-link"
+           data-src="2026-03-19/Linear Equations Mixed Practice - Declan Jee.pdf">
+          Linear Equations Mixed Practice
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">3/15</span>
+        <a class="popup-link"
+           data-src="2026-03-15/Declan Jee 3-15 Linear Equations & Word Problems - Declan Jee.pdf">
+          Linear Equations &amp; Word Problems
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">3/12</span>
+        <a class="popup-link"
+           data-src="2026-03-12/Declan Jee 3-12Writing and Solving Equations - Declan Jee.pdf">
+          Writing and Solving Equations
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">3/8</span>
+        <a class="popup-link"
+           data-src="2026-03-08/Declan 3-8 Algebra_ Multi-Step Equations & Word Problems - Declan Jee.pdf">
+          Algebra &mdash; Multi-Step Equations &amp; Word Problems
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">3/5</span>
+        <a class="popup-link"
+           data-src="2026-03-05/Declan Jee 3-5.pdf">
+          Lesson
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">3/1</span>
+        <a class="popup-link"
+           data-src="2026-03-01/Declan Jee 3-1.pdf">
+          Lesson
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">2/26</span>
+        <a class="popup-link"
+           data-src="2026-02-26/Declan Jee 2-26 .pdf">
+          Lesson
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">2/19</span>
+        <a class="popup-link"
+           data-src="2026-02-19/Declan Jee 02192026 homework.pdf">
+          Homework
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">2/12</span>
+        <a class="popup-link"
+           data-src="2026-02-12/Declan Jee 2-12 .pdf">
+          Lesson
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+      <li>
+        <span class="date">2/5</span>
+        <a class="popup-link"
+           data-src="2026-02-05/Declan Jee 2-5 homework.pdf">
+          Homework
+        </a>
+        <span class="pdf-badge">PDF</span>
+      </li>
+
+    </ul>
+  </section>
+
+  <section>
+    <div class="label">From Mr. Kenny</div>
+    <div class="teacher-note">
+      &ldquo;Thank you for the long journey at Newton School. &mdash; Kenny&rdquo;
+    </div>
+  </section>
+
+  <footer>
+    <div>Newton School &middot; Live Classroom</div>
+    <div class="copyright">For Declan Jee, Spring 2026</div>
+  </footer>
+</div>
+
+<!-- Shared Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <span class="modal-title" id="modalTitle"></span>
+        <span class="modal-esc">ESC to close</span>
       </div>
-
-      <div class="brand">
-        <div class="brand-mark">D</div>
-        <div class="brand-text"><b>NEWTON</b> · <span data-i18n="live_classroom">LIVE CLASSROOM</span></div>
-      </div>
-      <h1 class="student-name">Declan Jee</h1>
-      <div class="student-meta" data-i18n="student_meta">Grade 6 · Dwight-Englewood · Math</div>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-num" id="stat-lessons">0</div>
-          <div class="stat-label" data-i18n="lessons">LESSONS</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num" id="stat-files">0</div>
-          <div class="stat-label" data-i18n="files">FILES</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num" id="stat-months">0</div>
-          <div class="stat-label" data-i18n="months">MONTHS</div>
-        </div>
-      </div>
-
-      <button class="edit-toggle" id="edit-toggle" type="button">
-        <span class="edit-icon">✎</span>
-        <span data-i18n="edit_mode">EDIT MODE</span>
-        <span class="edit-count" id="edit-count">0 hidden</span>
-      </button>
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
     </div>
-
-    <div class="edit-bar" id="edit-bar">
-      <span data-i18n="edit_help">Check items to <b>hide</b> from the menu.</span>
-      <button class="mini-btn" id="reset-hidden" data-i18n="reset_all">Reset all</button>
-    </div>
-
-    <div class="search-wrap">
-      <input class="search" id="search" type="text" data-i18n-placeholder="search_ph" placeholder="Search topic, file, date…" />
-    </div>
-
-    <nav class="nav" id="nav"></nav>
-  </aside>
-
-  <!-- ============= VIEWER ============= -->
-  <main class="viewer">
-    <div class="viewer-toolbar">
-      <div class="crumb" id="crumb">
-        <span>📚</span>
-        <span data-i18n="select_a_lesson">Select a lesson on the left</span>
-      </div>
-      <div class="toolbar-actions" id="toolbar-actions"></div>
-    </div>
-    <div class="progress" id="progress"></div>
-
-    <div class="viewer-empty" id="viewer-empty">
-      <div class="hero">📐</div>
-      <h2 data-i18n="library_title">Declan's Lesson Library</h2>
-      <p data-i18n="library_desc">Pick a date on the left, then a worksheet or answer key. Past PDFs and today's HTML render in the panel — click <b>Open</b> in the toolbar to pop out for printing.</p>
-
-      <a class="game-hero" href="game/index.html" target="_blank">
-        <span class="icon">🎮</span>
-        <div class="meta">
-          <div class="ttl" data-i18n="game_title">Declan's Equation Dojo</div>
-          <div class="desc" data-i18n="game_desc">Battle monsters by solving equations &amp; negative-fraction problems. Streaks, lives, levels.</div>
-        </div>
-        <span class="arrow">→</span>
-      </a>
-
-      <div class="quick-actions" id="quick-actions"></div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <iframe class="viewer-frame" id="viewer-frame" style="display:none"></iframe>
-  </main>
-
+    <iframe class="modal-iframe" id="modalIframe" src="about:blank"></iframe>
+  </div>
 </div>
 
 <script>
-// Manifest is inlined so file:// works without a server.
-const MANIFEST = /*MANIFEST_START*/[
-  {
-    "date": "2026-02-05",
-    "topic": "Math · Pre-Algebra Basics",
-    "files": [
-      {
-        "name": "Declan Jee 2-5 homework.pdf",
-        "ext": "pdf",
-        "size_kb": 58.2
-      }
-    ]
-  },
-  {
-    "date": "2026-02-12",
-    "topic": "Math · Pre-Algebra",
-    "files": [
-      {
-        "name": "Declan Jee 2-12 .pdf",
-        "ext": "pdf",
-        "size_kb": 53.2
-      }
-    ]
-  },
-  {
-    "date": "2026-02-19",
-    "topic": "Math · Pre-Algebra",
-    "files": [
-      {
-        "name": "Declan Jee 02192026 homework.pdf",
-        "ext": "pdf",
-        "size_kb": 46.2
-      }
-    ]
-  },
-  {
-    "date": "2026-02-26",
-    "topic": "Math · Pre-Algebra",
-    "files": [
-      {
-        "name": "Declan Jee 2-26 .pdf",
-        "ext": "pdf",
-        "size_kb": 41.3
-      }
-    ]
-  },
-  {
-    "date": "2026-03-01",
-    "topic": "Math · Pre-Algebra",
-    "files": [
-      {
-        "name": "Declan Jee 3-1.pdf",
-        "ext": "pdf",
-        "size_kb": 48.2
-      }
-    ]
-  },
-  {
-    "date": "2026-03-05",
-    "topic": "Math · Pre-Algebra",
-    "files": [
-      {
-        "name": "Declan Jee 3-5.pdf",
-        "ext": "pdf",
-        "size_kb": 44.8
-      }
-    ]
-  },
-  {
-    "date": "2026-03-08",
-    "topic": "Algebra · Multi-Step Equations & Word Problems",
-    "files": [
-      {
-        "name": "Declan 3-8 Algebra_ Multi-Step Equations & Word Problems - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 137.7
-      },
-      {
-        "name": "Declan 3-8 Answer Key_ Algebra - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 259.8
-      }
-    ]
-  },
-  {
-    "date": "2026-03-12",
-    "topic": "Algebra · Writing & Solving Equations",
-    "files": [
-      {
-        "name": "Declan Jee 3-12 Writing and Solving Equations - Answer Key - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 131.3
-      },
-      {
-        "name": "Declan Jee 3-12Writing and Solving Equations - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 110.3
-      }
-    ]
-  },
-  {
-    "date": "2026-03-15",
-    "topic": "Algebra · Linear Equations & Word Problems",
-    "files": [
-      {
-        "name": "Declan Jee 3-15 Linear Equations & Word Problems - Answer Key - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 144.5
-      },
-      {
-        "name": "Declan Jee 3-15 Linear Equations & Word Problems - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 126.8
-      }
-    ]
-  },
-  {
-    "date": "2026-03-19",
-    "topic": "Algebra · Linear Equations Mixed Practice",
-    "files": [
-      {
-        "name": "Linear Equations Mixed Practice - Answer Key - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 240.1
-      },
-      {
-        "name": "Linear Equations Mixed Practice - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 161.0
-      }
-    ]
-  },
-  {
-    "date": "2026-03-26",
-    "topic": "Algebra · Multi-Step Equations & Word Problems",
-    "files": [
-      {
-        "name": "HW Declan 3-26 Answer Key_ Multi-Step Equations & Word Problems.pdf",
-        "ext": "pdf",
-        "size_kb": 237.1
-      },
-      {
-        "name": "HW Declan 3-26 Math Worksheet_ Multi-Step Equations & Word Problems.pdf",
-        "ext": "pdf",
-        "size_kb": 141.7
-      }
-    ]
-  },
-  {
-    "date": "2026-03-29",
-    "topic": "Math · Review",
-    "files": [
-      {
-        "name": "Declan Jee 3-29.pdf",
-        "ext": "pdf",
-        "size_kb": 46.2
-      }
-    ]
-  },
-  {
-    "date": "2026-04-09",
-    "topic": "Math · Speed, Distance & Time Word Problems",
-    "files": [
-      {
-        "name": "Speed, Distance & Time Word Problems - Answer Key - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 276.6
-      },
-      {
-        "name": "Speed, Distance & Time Word Problems - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 104.9
-      }
-    ]
-  },
-  {
-    "date": "2026-04-11",
-    "topic": "Math · Speed, Distance & Time",
-    "files": [
-      {
-        "name": "Answer Key - Speed, Distance & Time - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 263.4
-      },
-      {
-        "name": "Declan 4-11.pdf",
-        "ext": "pdf",
-        "size_kb": 1124.5
-      },
-      {
-        "name": "Speed, Distance & Time Worksheet - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 128.6
-      }
-    ]
-  },
-  {
-    "date": "2026-04-16",
-    "topic": "Math · Homework",
-    "files": [
-      {
-        "name": "Declan HW 4162026.pdf",
-        "ext": "pdf",
-        "size_kb": 417.1
-      }
-    ]
-  },
-  {
-    "date": "2026-04-18",
-    "topic": "Pre-Algebra · Coordinate Plane & Slope",
-    "files": [
-      {
-        "name": "Coordinate Plane & Slope Answer Key - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 166.9
-      },
-      {
-        "name": "Coordinate Plane & Slope Worksheet - Declan Jee.pdf",
-        "ext": "pdf",
-        "size_kb": 195.1
-      },
-      {
-        "name": "Declan 4-18 Homework.pdf",
-        "ext": "pdf",
-        "size_kb": 124.5
-      }
-    ]
-  },
-  {
-    "date": "2026-04-23",
-    "topic": "Math · Homework",
-    "files": [
-      {
-        "name": "Declan Jee 4-23 Homework.pdf",
-        "ext": "pdf",
-        "size_kb": 81.0
-      }
-    ]
-  },
-  {
-    "date": "2026-04-25",
-    "topic": "Pre-Algebra · Linear Graphs, Slope & Equation Solving (Infinite 30Q)",
-    "files": [
-      {
-        "name": "Declan Jee hw 4-25.pdf",
-        "ext": "pdf",
-        "size_kb": 63.1
-      },
-      {
-        "name": "DeclanJee-2026-04-25-PreAlgebra_Homework-LinearGraphsSlopeAndEquationSolving.pdf",
-        "ext": "pdf",
-        "size_kb": 63.1
-      }
-    ]
-  },
-  {
-    "date": "2026-04-30",
-    "topic": "Math · Fractions (12Q) + Equations w/ Distribution (12Q)",
-    "files": [
-      {
-        "name": "DeclanJee-2026-04-30-Math_Homework-EquationsDistributionVariablesBothSides_AnswerKey.html",
-        "ext": "html",
-        "size_kb": 9.4
-      },
-      {
-        "name": "DeclanJee-2026-04-30-Math_Homework-EquationsDistributionVariablesBothSides_AnswerKey.pdf",
-        "ext": "pdf",
-        "size_kb": 120.7
-      },
-      {
-        "name": "DeclanJee-2026-04-30-Math_Homework-EquationsDistributionVariablesBothSides_Worksheet.html",
-        "ext": "html",
-        "size_kb": 4.9
-      },
-      {
-        "name": "DeclanJee-2026-04-30-Math_Homework-EquationsDistributionVariablesBothSides_Worksheet.pdf",
-        "ext": "pdf",
-        "size_kb": 105.4
-      },
-      {
-        "name": "DeclanJee-2026-04-30-Math_Homework-FractionAddSubtractNegatives_AnswerKey.html",
-        "ext": "html",
-        "size_kb": 9.5
-      },
-      {
-        "name": "DeclanJee-2026-04-30-Math_Homework-FractionAddSubtractNegatives_AnswerKey.pdf",
-        "ext": "pdf",
-        "size_kb": 105.8
-      },
-      {
-        "name": "DeclanJee-2026-04-30-Math_Homework-FractionAddSubtractNegatives_Worksheet.html",
-        "ext": "html",
-        "size_kb": 5.1
-      },
-      {
-        "name": "DeclanJee-2026-04-30-Math_Homework-FractionAddSubtractNegatives_Worksheet.pdf",
-        "ext": "pdf",
-        "size_kb": 102.1
-      }
-    ]
-  }
-]/*MANIFEST_END*/;
+  const overlay = document.getElementById('modalOverlay');
+  const iframe  = document.getElementById('modalIframe');
+  const title   = document.getElementById('modalTitle');
 
-const TODAY = "2026-04-30";
-
-// ---------- Helpers ----------
-const dayOfWeek = (yyyy_mm_dd) => {
-  const d = new Date(yyyy_mm_dd + "T12:00:00");
-  return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()];
-};
-const monthLabel = (yyyy_mm_dd) => {
-  const [y, m] = yyyy_mm_dd.split("-");
-  const names = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-  return `${names[parseInt(m,10)-1]} ${y}`;
-};
-const fileIcon = (ext) => ({pdf:"📄",html:"🌐",md:"📝"}[ext] || "📎");
-const fileTag = (name) => {
-  const n = name.toLowerCase();
-  if (n.endsWith(".md")) return '<span class="tag-pill tag-md">MD</span>';
-  if (n.includes("answerkey") || n.includes("answer key")) return '<span class="tag-pill tag-ak">KEY</span>';
-  if (n.includes("worksheet")) return '<span class="tag-pill tag-ws">WS</span>';
-  if (n.includes("homework") || n.includes(" hw ")) return '<span class="tag-pill tag-hw">HW</span>';
-  return "";
-};
-
-// ---------- Group by month, sort newest first ----------
-const grouped = {};
-MANIFEST.forEach(d => {
-  const ml = monthLabel(d.date);
-  (grouped[ml] = grouped[ml] || []).push(d);
-});
-const sortedMonths = Object.keys(grouped).sort((a,b) => {
-  // sort YYYY desc then month desc
-  const [ma,ya] = a.split(" "); const [mb,yb] = b.split(" ");
-  if (ya !== yb) return yb.localeCompare(ya);
-  const mo = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-  return mo.indexOf(mb) - mo.indexOf(ma);
-});
-sortedMonths.forEach(m => grouped[m].sort((a,b) => b.date.localeCompare(a.date)));
-
-// ---------- Stats ----------
-const totalFiles = MANIFEST.reduce((s,d) => s + d.files.length, 0);
-document.getElementById("stat-lessons").textContent = MANIFEST.length;
-document.getElementById("stat-files").textContent = totalFiles;
-document.getElementById("stat-months").textContent = sortedMonths.length;
-
-// ---------- i18n ----------
-const I18N = {
-  en: {
-    print: "PRINT", dark: "DARK", light: "LIGHT",
-    live_classroom: "LIVE CLASSROOM",
-    student_meta: "Grade 6 · Dwight-Englewood · Math",
-    lessons: "LESSONS", files: "FILES", months: "MONTHS",
-    edit_mode: "EDIT MODE",
-    edit_help: "Check items to <b>hide</b> from the menu.",
-    reset_all: "Reset all",
-    search_ph: "Search topic, file, date…",
-    select_a_lesson: "Select a lesson on the left",
-    library_title: "Declan's Lesson Library",
-    library_desc: "Pick a date on the left, then a worksheet or answer key. Past PDFs and today's HTML render in the panel — click <b>Open</b> in the toolbar to pop out for printing.",
-    open_btn: "↗ Open", print_btn: "🖨 Print",
-    today_badge: "TODAY",
-    n_hidden: (n) => `${n} hidden`,
-    nothing_to_print: "No file open — pick a worksheet first.",
-    lang_switched: "Language: English",
-    game_title: "Declan's Equation Dojo",
-    game_desc: "Battle monsters by solving equations &amp; negative-fraction problems. Streaks, lives, levels."
-  },
-  ko: {
-    print: "인쇄", dark: "다크", light: "라이트",
-    live_classroom: "라이브 클래스룸",
-    student_meta: "6학년 · Dwight-Englewood · 수학",
-    lessons: "수업", files: "자료", months: "달",
-    edit_mode: "편집 모드",
-    edit_help: "메뉴에서 <b>숨길</b> 항목을 체크하세요.",
-    reset_all: "전체 해제",
-    search_ph: "주제·파일·날짜 검색…",
-    select_a_lesson: "왼쪽에서 수업을 선택하세요",
-    library_title: "Declan 수업 자료실",
-    library_desc: "왼쪽에서 날짜를 고르고 워크시트나 정답지를 선택하세요. 옛날 PDF 와 오늘 HTML 모두 이 패널에 표시됩니다 — 인쇄하려면 툴바의 <b>열기</b> 버튼을 누르세요.",
-    open_btn: "↗ 열기", print_btn: "🖨 인쇄",
-    today_badge: "오늘",
-    n_hidden: (n) => `${n}개 숨김`,
-    nothing_to_print: "열린 자료가 없습니다 — 워크시트를 먼저 선택하세요.",
-    lang_switched: "언어: 한국어",
-    game_title: "Declan 방정식 도장",
-    game_desc: "방정식과 음수 분수 문제를 풀어 몬스터를 쓰러뜨리세요. 스트릭·라이프·레벨 시스템."
-  }
-};
-const PREF_KEY = "declan-lesson-library-prefs-v1";
-const prefs = (() => {
-  try { return JSON.parse(localStorage.getItem(PREF_KEY) || "{}"); }
-  catch { return {}; }
-})();
-const savePrefs = () => localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
-
-let lang = prefs.lang || "ko";
-let theme = prefs.theme || "dark";
-
-const t = (key, ...args) => {
-  const v = I18N[lang][key];
-  return typeof v === "function" ? v(...args) : (v ?? key);
-};
-
-function applyI18n() {
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    el.innerHTML = t(el.dataset.i18n);
-  });
-  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-    el.placeholder = t(el.dataset.i18nPlaceholder);
-  });
-  document.documentElement.lang = lang;
-  document.getElementById("lang-lbl").textContent = lang === "ko" ? "KO" : "EN";
-}
-
-function applyTheme() {
-  document.body.classList.toggle("theme-light", theme === "light");
-  document.getElementById("theme-icon").textContent = theme === "light" ? "☀️" : "🌙";
-  document.getElementById("theme-lbl").textContent = t(theme);
-}
-
-// ---------- Toast ----------
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById("toast");
-  el.innerHTML = msg;
-  el.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
-}
-
-// ---------- Hidden items (Edit mode) ----------
-// Default behavior: dates BEFORE today are auto-hidden on first load.
-// User can flip Edit mode and uncheck to bring any past lesson back.
-const HIDE_KEY = "declan-lesson-library-hidden-v2";
-let hiddenSet;
-const stored = localStorage.getItem(HIDE_KEY);
-if (stored === null) {
-  // first load → auto-hide every past date
-  hiddenSet = new Set(
-    MANIFEST.filter(d => d.date < TODAY).map(d => `date::${d.date}`)
-  );
-  localStorage.setItem(HIDE_KEY, JSON.stringify([...hiddenSet]));
-} else {
-  try { hiddenSet = new Set(JSON.parse(stored)); }
-  catch (_) { hiddenSet = new Set(); }
-}
-const saveHidden = () => localStorage.setItem(HIDE_KEY, JSON.stringify([...hiddenSet]));
-const isHidden = (key) => hiddenSet.has(key);
-const updateHiddenCount = () => {
-  document.getElementById("edit-count").textContent = t("n_hidden", hiddenSet.size);
-};
-
-// ---------- Render nav ----------
-const nav = document.getElementById("nav");
-sortedMonths.forEach((m, idx) => {
-  const grp = document.createElement("div");
-  grp.className = "month-group";
-  const totalInMonth = grouped[m].reduce((s,d) => s + d.files.length, 0);
-  const collapsed = idx > 1; // only first 2 months expanded
-  grp.innerHTML = `
-    <div class="month-header ${collapsed?'collapsed':''}">
-      <span><span class="chev">▾</span> ${m}</span>
-      <span class="month-count">${grouped[m].length}d · ${totalInMonth}f</span>
-    </div>
-    <div class="month-body ${collapsed?'hidden':''}"></div>
-  `;
-  const body = grp.querySelector(".month-body");
-  grouped[m].forEach(entry => {
-    const isToday = entry.date === TODAY;
-    const isFuture = entry.date > TODAY;
-    const dItem = document.createElement("div");
-    dItem.className = "date-item" + (isToday?" today expanded":"") + (isFuture?" future":"");
-    dItem.dataset.date = entry.date;
-    const dateKey = `date::${entry.date}`;
-    if (isHidden(dateKey)) dItem.classList.add("hidden");
-    dItem.innerHTML = `
-      <div class="date-row">
-        <input class="checkbox date-checkbox" type="checkbox" data-key="${dateKey}" ${isHidden(dateKey)?"checked":""} title="Hide this whole date">
-        <span class="date-dot"></span>
-        <div class="date-info">
-          <div class="date-label">
-            <span>${entry.date.slice(5)}</span>
-            <span class="day-of-week">${dayOfWeek(entry.date)}</span>
-            ${isToday?`<span class="today-badge">${t("today_badge")}</span>`:''}
-          </div>
-          <div class="date-topic">${entry.topic}</div>
-        </div>
-        <div class="date-files-count">${entry.files.length}</div>
-      </div>
-      <div class="file-list">
-        ${entry.files.map(f => {
-          const fileKey = `file::${entry.date}/${f.name}`;
-          const fileHidden = isHidden(fileKey);
-          return `
-          <div class="file-item ${fileHidden?'hidden':''}" data-path="${entry.date}/${f.name}" data-ext="${f.ext}">
-            <input class="checkbox file-checkbox" type="checkbox" data-key="${fileKey}" ${fileHidden?"checked":""} title="Hide this file">
-            <span class="file-icon">${fileIcon(f.ext)}</span>
-            ${fileTag(f.name)}
-            <span class="file-name" title="${f.name}">${f.name.replace(/^DeclanJee-\d{4}-\d{2}-\d{2}-/, "").replace(/Declan( Jee)?( hw)?/i,"").replace(/^\s*[-_]\s*/,"")}</span>
-            <span class="file-size">${f.size_kb}k</span>
-          </div>`;
-        }).join("")}
-      </div>
-    `;
-    body.appendChild(dItem);
-  });
-  nav.appendChild(grp);
-});
-updateHiddenCount();
-
-// ---------- Quick actions on welcome screen ----------
-const qa = document.getElementById("quick-actions");
-const todayEntry = MANIFEST.find(d => d.date === TODAY);
-const recentEntries = MANIFEST.slice().sort((a,b) => b.date.localeCompare(a.date)).slice(0, 4);
-recentEntries.forEach(entry => {
-  if (!entry.files.length) return;
-  const f = entry.files[0];
-  const card = document.createElement("div");
-  card.className = "qa-card";
-  card.dataset.path = `${entry.date}/${f.name}`;
-  card.dataset.ext = f.ext;
-  const isToday = entry.date === TODAY;
-  card.innerHTML = `
-    <div class="qa-icon">${isToday?'⭐':fileIcon(f.ext)}</div>
-    <div class="qa-title">${isToday?"TODAY · ":""}${entry.topic}</div>
-    <div class="qa-meta">${entry.date} · ${dayOfWeek(entry.date)} · ${entry.files.length} file(s)</div>
-  `;
-  qa.appendChild(card);
-});
-
-// ---------- Edit mode toggle ----------
-const editToggle = document.getElementById("edit-toggle");
-editToggle.addEventListener("click", () => {
-  document.body.classList.toggle("edit-mode");
-  editToggle.classList.toggle("on");
-});
-
-document.getElementById("reset-hidden").addEventListener("click", () => {
-  hiddenSet.clear();
-  saveHidden();
-  document.querySelectorAll(".date-item.hidden, .file-item.hidden").forEach(el => el.classList.remove("hidden"));
-  document.querySelectorAll(".checkbox").forEach(cb => cb.checked = false);
-  updateHiddenCount();
-});
-
-// ---------- Interactions ----------
-nav.addEventListener("click", (e) => {
-  // Checkbox toggle (edit mode)
-  const cb = e.target.closest(".checkbox");
-  if (cb) {
-    e.stopPropagation();
-    const key = cb.dataset.key;
-    if (cb.checked) hiddenSet.add(key); else hiddenSet.delete(key);
-    saveHidden();
-    updateHiddenCount();
-    // Apply hidden class to closest .date-item or .file-item
-    const targetItem = key.startsWith("date::")
-      ? cb.closest(".date-item")
-      : cb.closest(".file-item");
-    if (targetItem) targetItem.classList.toggle("hidden", cb.checked);
-    return;
-  }
-
-  const monthHeader = e.target.closest(".month-header");
-  if (monthHeader) {
-    monthHeader.classList.toggle("collapsed");
-    monthHeader.nextElementSibling.classList.toggle("hidden");
-    return;
-  }
-  // In edit mode, file clicks should NOT open — let user check freely
-  if (document.body.classList.contains("edit-mode")) return;
-
-  const fileItem = e.target.closest(".file-item");
-  if (fileItem) {
-    openFile(fileItem.dataset.path, fileItem.dataset.ext);
-    document.querySelectorAll(".file-item.active").forEach(el => el.classList.remove("active"));
-    fileItem.classList.add("active");
-    return;
-  }
-  const dateRow = e.target.closest(".date-row");
-  if (dateRow) {
-    dateRow.parentElement.classList.toggle("expanded");
-  }
-});
-
-document.getElementById("quick-actions").addEventListener("click", (e) => {
-  const card = e.target.closest(".qa-card");
-  if (!card) return;
-  openFile(card.dataset.path, card.dataset.ext);
-  // also expand & highlight in nav
-  const date = card.dataset.path.split("/")[0];
-  const item = document.querySelector(`.date-item[data-date="${date}"]`);
-  if (item) {
-    item.classList.add("expanded");
-    item.scrollIntoView({behavior:"smooth", block:"center"});
-    const fItem = item.querySelector(`.file-item[data-path="${card.dataset.path}"]`);
-    if (fItem) {
-      document.querySelectorAll(".file-item.active").forEach(el => el.classList.remove("active"));
-      fItem.classList.add("active");
-    }
-  }
-});
-
-const frame = document.getElementById("viewer-frame");
-const empty = document.getElementById("viewer-empty");
-const crumb = document.getElementById("crumb");
-const progress = document.getElementById("progress");
-const toolbarActions = document.getElementById("toolbar-actions");
-
-function openFile(path, ext) {
-  const [date, ...rest] = path.split("/");
-  const fileName = rest.join("/");
-
-  // Markdown: show via a quick-render iframe trick — fall back to raw text
-  if (ext === "md") {
-    fetch(path).then(r => r.text()).then(text => {
-      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
-        body{font-family:'Pretendard Variable',sans-serif;background:#fafafa;color:#222;padding:32px 48px;line-height:1.7;max-width:900px;margin:0 auto;}
-        h1,h2,h3{border-bottom:1px solid #ddd;padding-bottom:6px;margin-top:24px;}
-        code{background:#eee;padding:2px 6px;border-radius:4px;font-size:.9em;}
-        pre{background:#f0f0f0;padding:12px;border-radius:6px;overflow:auto;}
-        table{border-collapse:collapse;margin:12px 0;}
-        th,td{border:1px solid #ccc;padding:6px 12px;}
-        th{background:#eee;}
-        blockquote{border-left:4px solid #a78bfa;padding-left:12px;color:#555;margin:12px 0;}
-      </style></head><body><pre style="white-space:pre-wrap;word-wrap:break-word;font-family:inherit;">${text.replace(/[<>&]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))}</pre></body></html>`;
-      frame.srcdoc = html;
-    }).catch(() => {
-      frame.src = path;
-    });
-  } else {
-    frame.removeAttribute("srcdoc");
-    frame.src = path;
-  }
-
-  empty.style.display = "none";
-  frame.style.display = "block";
-  progress.classList.remove("done");
-  progress.classList.add("loading");
-  frame.onload = () => {
-    progress.classList.remove("loading");
-    progress.classList.add("done");
+  const openModal = (src, label) => {
+    iframe.src = src;
+    title.textContent = label;
+    overlay.classList.add('open');
+    document.body.classList.add('modal-open');
   };
 
-  crumb.innerHTML = `<span>📐</span><span>${date}</span><span class="sep">›</span><b>${fileName}</b>`;
-  toolbarActions.innerHTML = `
-    <button class="btn" onclick="window.open('${path}','_blank')">${t("open_btn")}</button>
-    <button class="btn primary" onclick="printCurrent()">${t("print_btn")}</button>
-  `;
-}
+  const closeModal = () => {
+    overlay.classList.remove('open');
+    document.body.classList.remove('modal-open');
+    iframe.src = 'about:blank';
+  };
 
-// ---------- Global print ----------
-function printCurrent() {
-  if (frame.style.display !== "block") {
-    toast(t("nothing_to_print"));
-    return;
-  }
-  try {
-    frame.contentWindow.focus();
-    frame.contentWindow.print();
-  } catch (_) {
-    // fallback: open in new tab so user can print there
-    if (frame.src) window.open(frame.src, "_blank");
-    else toast(t("nothing_to_print"));
-  }
-}
-
-// ---------- Search ----------
-document.getElementById("search").addEventListener("input", (e) => {
-  const q = e.target.value.toLowerCase().trim();
-  document.querySelectorAll(".date-item").forEach(item => {
-    const text = item.textContent.toLowerCase();
-    item.style.display = !q || text.includes(q) ? "" : "none";
+  document.querySelectorAll('.popup-link').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      openModal(a.dataset.src, a.textContent.trim());
+    });
   });
-  // hide empty months
-  document.querySelectorAll(".month-group").forEach(grp => {
-    const visible = Array.from(grp.querySelectorAll(".date-item")).some(i => i.style.display !== "none");
-    grp.style.display = visible ? "" : "none";
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) closeModal();
   });
-});
 
-// ---------- Header toggle wiring ----------
-document.getElementById("btn-print").addEventListener("click", printCurrent);
-
-document.getElementById("btn-theme").addEventListener("click", () => {
-  theme = theme === "light" ? "dark" : "light";
-  prefs.theme = theme;
-  savePrefs();
-  applyTheme();
-});
-
-document.getElementById("btn-lang").addEventListener("click", () => {
-  lang = lang === "ko" ? "en" : "ko";
-  prefs.lang = lang;
-  savePrefs();
-  applyI18n();
-  // re-render dynamic strings: edit-count + active toolbar buttons
-  updateHiddenCount();
-  applyTheme(); // re-apply theme label since it depends on lang
-  // re-render TODAY badges in nav
-  document.querySelectorAll(".today-badge").forEach(el => el.textContent = t("today_badge"));
-  // re-render toolbar buttons if a file is open
-  const active = document.querySelector(".file-item.active");
-  if (active) openFile(active.dataset.path, active.dataset.ext);
-  toast(t("lang_switched"));
-});
-
-// ---------- Apply preferences on load ----------
-applyI18n();
-applyTheme();
-
-// ---------- Auto-open today's worksheet on first load ----------
-window.addEventListener("DOMContentLoaded", () => {
-  const todayItem = document.querySelector(".date-item.today");
-  if (todayItem) todayItem.scrollIntoView({block:"center"});
-});
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
 </script>
 </body>
 </html>

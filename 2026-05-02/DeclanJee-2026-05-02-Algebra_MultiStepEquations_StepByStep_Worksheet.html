@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Multi-Step Equations: Solve Line-by-Line — Declan Jee</title>
+<script>
+window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    startup: { ready: () => { MathJax.startup.defaultReady(); } }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+/* ===== base-print.css ===== */
+@page { size: letter; margin: 0.5in; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fafafa; }
+body { font-family: 'Century Schoolbook', 'Times New Roman', serif; color: #000; }
+.page { max-width: 720px; margin: 0 auto; padding: 70px 50px 40px 50px; background: #fff; }
+.page-break { page-break-before: always; break-before: page; }
+@media print {
+    html, body { background: #fff; }
+    .page { max-width: none; padding: 0.7in 0.6in 0.5in 0.6in; margin: 0; box-shadow: none; }
+    .problem, .answer-block, .reminder, .parent-note, .example, .word-problem {
+        page-break-inside: avoid; break-inside: avoid;
+    }
+    .part-header, .directions, .problem-header, h1, h2, h3 {
+        page-break-after: avoid; break-after: avoid;
+    }
+    .page-break { page-break-before: always; break-before: page; }
+}
+
+/* ===== theme-boy.css ===== */
+:root {
+    --color-primary: #1565c0;
+    --color-primary-dark: #0d47a1;
+    --color-accent: #00838f;
+    --color-header-border: #1565c0;
+    --color-final-answer: #2e7d32;
+    --color-warning: #c62828;
+    --color-parent-note: #283593;
+    --color-tag-bg: transparent;
+    --color-tag-border: #1565c0;
+    --color-tag-text: #1565c0;
+    --color-muted: #555;
+    --color-rule: #ccc;
+}
+
+/* ===== level-middle.css ===== */
+body { font-family: 'Times New Roman', serif; font-size: 11pt; line-height: 1.5; }
+.header {
+    text-align: center;
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid var(--color-header-border);
+}
+.school-name { font-size: 9pt; letter-spacing: 4px; color: var(--color-primary); font-weight: bold; }
+.subject-tag {
+    display: inline-block; padding: 2px 10px; font-size: 8pt; letter-spacing: 2px;
+    margin: 5px 3px 8px 3px; font-weight: bold;
+    border: 1.5px solid var(--color-primary); color: var(--color-primary);
+}
+h1 { font-size: 15pt; margin: 6px 0 10px 0; font-weight: bold; line-height: 1.3; }
+.info { display: flex; justify-content: space-between; font-size: 10pt; margin-top: 6px; }
+.standard { font-size: 8pt; font-style: italic; margin-top: 5px; color: var(--color-muted); }
+.part-header {
+    font-size: 12pt; font-weight: bold; color: var(--color-primary);
+    margin: 22px 0 6px 0; padding-bottom: 3px;
+    border-bottom: 2px solid var(--color-primary);
+}
+.directions {
+    font-size: 10pt; font-style: italic; color: #333;
+    margin-bottom: 12px; line-height: 1.5;
+}
+.directions strong { color: #000; font-style: normal; }
+.footer {
+    text-align: center; font-size: 8pt; color: #666;
+    border-top: 1px solid var(--color-rule);
+    margin-top: 22px; padding-top: 6px;
+}
+
+/* ===== Custom: Split layout (left=problem / right=step lines) ===== */
+.problem-row {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    margin: 10px 0;
+    padding: 10px 0 14px 0;
+    border-bottom: 1px dashed #ccc;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.problem-left {
+    flex: 0 0 32%;
+    padding: 8px 12px;
+    border-right: 2px solid var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 6px;
+}
+.problem-left .q-num {
+    font-weight: bold;
+    color: var(--color-primary);
+    font-size: 12pt;
+}
+.problem-left .equation {
+    font-size: 14pt;
+    margin-top: 6px;
+    line-height: 1.6;
+}
+.problem-left .difficulty-badge {
+    display: inline-block;
+    font-size: 8pt;
+    padding: 1px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--color-tag-border);
+    color: var(--color-tag-text);
+    width: fit-content;
+}
+.problem-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 8px 6px 8px 12px;
+}
+.step-label {
+    font-size: 8.5pt;
+    color: var(--color-muted);
+    font-style: italic;
+    margin-bottom: 3px;
+    letter-spacing: 1px;
+}
+.step-line {
+    border-bottom: 1px solid #999;
+    height: 22px;
+    margin-bottom: 6px;
+}
+.step-line.answer-line {
+    border-bottom: 2px solid var(--color-final-answer);
+    margin-top: 4px;
+}
+.step-line.answer-line::before {
+    content: "Answer: ";
+    color: var(--color-final-answer);
+    font-weight: bold;
+    font-style: italic;
+    font-size: 9pt;
+}
+
+/* Reminder block */
+.reminder {
+    border: 1.5px solid var(--color-warning);
+    background: transparent;
+    padding: 10px 14px;
+    margin: 14px 0 18px 0;
+    font-size: 10pt;
+    line-height: 1.55;
+    page-break-inside: avoid;
+}
+.reminder-title {
+    font-weight: bold;
+    color: var(--color-warning);
+    font-size: 10pt;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+.reminder ul { margin: 4px 0 0 18px; padding: 0; }
+.reminder li { margin: 2px 0; }
+
+@media print {
+    .problem-row {
+        border-bottom: 1px dashed #ccc;
+    }
+    .step-line { border-bottom: 1px solid #888; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+    <!-- ============== HEADER ============== -->
+    <div class="header">
+        <div class="school-name">N E W T O N &nbsp; S C H O O L</div>
+        <span class="subject-tag">ALGEBRA</span>
+        <h1>Multi-Step Equations: Solve Line-by-Line</h1>
+        <div class="info">
+            <span><strong>Student:</strong> Declan Jee</span>
+            <span><strong>Date:</strong> 2026-05-02</span>
+        </div>
+        <div class="standard">
+            <strong>Standard:</strong> CCSS.MATH.CONTENT.8.EE.C.7.b — Solve linear equations
+            with rational coefficients, using the distributive property and combining like terms.
+        </div>
+    </div>
+
+    <!-- ============== REMINDER (Kenny's teaching point) ============== -->
+    <div class="reminder">
+        <div class="reminder-title">⚠ HOW TO USE THIS WORKSHEET</div>
+        <ul>
+            <li><strong>One step per line</strong> — write each move on its own line on the right.</li>
+            <li>Show what you <em>did</em> to both sides (e.g., <em>−7</em>, <em>÷ 3</em>, <em>distribute</em>).</li>
+            <li>Don't skip — Kenny will ask you to <strong>explain step-by-step</strong> in class.</li>
+            <li>Final answer goes on the green line at the bottom.</li>
+        </ul>
+    </div>
+
+    <!-- ============== PART A: TWO-STEP ============== -->
+    <div class="part-header">Part A &nbsp;·&nbsp; Two-Step Equations</div>
+    <div class="directions">Get the variable alone. Undo addition/subtraction first, then multiplication/division.</div>
+
+    <!-- Problem 1 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">1.</span>
+            <span class="difficulty-badge">EASY</span>
+            <div class="equation">\(4y + 7 = 23\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Problem 2 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">2.</span>
+            <span class="difficulty-badge">EASY</span>
+            <div class="equation">\(-\dfrac{1}{3}b + 5 = 1\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Problem 3 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">3.</span>
+            <span class="difficulty-badge">EASY</span>
+            <div class="equation">\(\dfrac{2n}{5} = -8\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- ============== PART B: COMBINE LIKE TERMS ============== -->
+    <div class="part-header page-break">Part B &nbsp;·&nbsp; Combine Like Terms First</div>
+    <div class="directions">When the same variable appears more than once on a side, combine them <strong>before</strong> moving anything across the equal sign.</div>
+
+    <!-- Problem 4 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">4.</span>
+            <span class="difficulty-badge">MEDIUM</span>
+            <div class="equation">\(-3x + 8x = -25\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Problem 5 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">5.</span>
+            <span class="difficulty-badge">MEDIUM</span>
+            <div class="equation">\(12 = 6m - 2 + m\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- ============== PART C: DISTRIBUTIVE PROPERTY ============== -->
+    <div class="part-header">Part C &nbsp;·&nbsp; Distribute First, Then Solve</div>
+    <div class="directions">Multiply through the parentheses on line 1. Then it becomes a regular two-step problem.</div>
+
+    <!-- Problem 6 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">6.</span>
+            <span class="difficulty-badge">MEDIUM</span>
+            <div class="equation">\(3(x - 2) = 18\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Problem 7 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">7.</span>
+            <span class="difficulty-badge">MEDIUM</span>
+            <div class="equation">\(-2(p + 5) = 14\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- ============== PART D: DISTRIBUTE + EXTRA STEP ============== -->
+    <div class="part-header page-break">Part D &nbsp;·&nbsp; Distribute + One More Step</div>
+    <div class="directions">Distribute first. Then there is one extra constant outside that you have to deal with before isolating.</div>
+
+    <!-- Problem 8 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">8.</span>
+            <span class="difficulty-badge">HARD</span>
+            <div class="equation">\(4(k - 3) + 7 = -5\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Problem 9 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">9.</span>
+            <span class="difficulty-badge">HARD</span>
+            <div class="equation">\(5(c + 1) - 12 = -7\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <!-- Problem 10 -->
+    <div class="problem-row">
+        <div class="problem-left">
+            <span class="q-num">10.</span>
+            <span class="difficulty-badge">HARD</span>
+            <div class="equation">\(2d + 3(d - 4) = -27\)</div>
+        </div>
+        <div class="problem-right">
+            <div class="step-label">STEPS (one per line):</div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line"></div>
+            <div class="step-line answer-line"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Created by Newton School &nbsp;·&nbsp; 2026-05-02 &nbsp;·&nbsp; &copy; Copyright
+    </div>
+
+</div>
+</body>
+</html>
